@@ -1,0 +1,10 @@
+.app-container {
+  @apply bg-gray-100 min-h-screen;
+}
+
+.app-header {
+}
+
+.app-title {
+  @apply text-3xl font-bold;
+}
