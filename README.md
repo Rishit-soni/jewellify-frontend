@@ -201,7 +201,7 @@ ng add @angular/pwa
 server {
     listen 80;
     server_name your-domain.com;
-    root /path/to/dist/angular-playground;
+    root /path/to/dist/Jewellify;
     index index.html;
 
     location / {
