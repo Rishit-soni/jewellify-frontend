@@ -1,0 +1,195 @@
+<div class="p-4 md:p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Inventory Management</h1>
+    <p class="text-gray-600">Manage your jewelry items and stock</p>
+  </div>
+
+  <p-card>
+    <!-- Filters Section -->
+    <div class="mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <!-- Search -->
+        <div class="md:col-span-4">
+          <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
+            Search
+          </label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              id="search"
+              type="text"
+              [(ngModel)]="filters.search"
+              (keyup.enter)="onSearch()"
+              placeholder="Search by name, code, or HUID"
+              class="w-full"
+            />
+          </span>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="md:col-span-3">
+          <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+            Category
+          </label>
+          <p-select
+            id="category"
+            [(ngModel)]="filters.category"
+            [options]="categories"
+            optionLabel="label"
+            optionValue="value"
+            (onChange)="onCategoryChange()"
+            styleClass="w-full"
+          ></p-select>
+        </div>
+
+        <!-- Stock Status Filter -->
+        <div class="md:col-span-3">
+          <label for="stockStatus" class="block text-sm font-medium text-gray-700 mb-2">
+            Stock Status
+          </label>
+          <p-select
+            id="stockStatus"
+            [(ngModel)]="filters.stockStatus"
+            [options]="stockStatuses"
+            optionLabel="label"
+            optionValue="value"
+            (onChange)="onStockStatusChange()"
+            styleClass="w-full"
+          ></p-select>
+        </div>
+
+        <!-- Actions -->
+        <div class="md:col-span-2 flex items-end gap-2">
+          <p-button
+            icon="pi pi-filter-slash"
+            (onClick)="clearFilters()"
+            [outlined]="true"
+            severity="secondary"
+            pTooltip="Clear Filters"
+            tooltipPosition="top"
+          ></p-button>
+          <p-button
+            icon="pi pi-plus"
+            label="Add Item"
+            (onClick)="onAddItem()"
+            severity="primary"
+            styleClass="hidden md:inline-flex"
+          ></p-button>
+          <p-button
+            icon="pi pi-plus"
+            (onClick)="onAddItem()"
+            severity="primary"
+            styleClass="md:hidden"
+            pTooltip="Add Item"
+            tooltipPosition="top"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <p-table
+      [value]="items"
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="filters.limit || 10"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
+      (onLazyLoad)="onPageChange($event)"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="itemCode">
+            Item Code
+            <p-sortIcon field="itemCode"></p-sortIcon>
+          </th>
+          <th pSortableColumn="name">
+            Name
+            <p-sortIcon field="name"></p-sortIcon>
+          </th>
+          <th>Category</th>
+          <th class="hidden md:table-cell">HUID</th>
+          <th class="hidden lg:table-cell">Gross Weight</th>
+          <th class="hidden lg:table-cell">Net Weight</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>
+            <span class="font-medium text-indigo-600">{{ item.itemCode }}</span>
+          </td>
+          <td>
+            <div>
+              <div class="font-medium">{{ item.name }}</div>
+              <div class="text-sm text-gray-500 md:hidden">{{ item.huid }}</div>
+            </div>
+          </td>
+          <td>
+            <span class="text-sm bg-gray-100 px-2 py-1 rounded">{{ item.category }}</span>
+          </td>
+          <td class="hidden md:table-cell">
+            <span class="text-sm text-gray-600">{{ item.huid }}</span>
+          </td>
+          <td class="hidden lg:table-cell">
+            {{ item.grossWeight }}g
+          </td>
+          <td class="hidden lg:table-cell">
+            {{ item.netWeight }}g
+          </td>
+          <td>
+            <span class="font-semibold">{{ item.stockQty }}</span>
+          </td>
+          <td>
+            <p-tag
+              [value]="getStockLabel(item.stockQty)"
+              [severity]="getStockSeverity(item.stockQty)"
+            ></p-tag>
+          </td>
+          <td>
+            <div class="flex gap-2">
+              <p-button
+                icon="pi pi-pencil"
+                (onClick)="onEditItem(item)"
+                [text]="true"
+                severity="info"
+                size="small"
+                pTooltip="Edit"
+                tooltipPosition="top"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                (onClick)="onDeleteItem(item)"
+                [text]="true"
+                severity="danger"
+                size="small"
+                pTooltip="Delete"
+                tooltipPosition="top"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="9" class="text-center py-8">
+            <div class="text-gray-400">
+              <i class="pi pi-inbox text-4xl mb-3"></i>
+              <p class="text-lg">No items found</p>
+              <p class="text-sm">Try adjusting your filters or add a new item</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <p-confirmDialog></p-confirmDialog>
+</div>

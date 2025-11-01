@@ -1,0 +1,125 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
+  <div class="w-full max-w-2xl">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl mb-4">
+        <i class="pi pi-diamond text-3xl text-white"></i>
+      </div>
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">Jewellify</h1>
+      <p class="text-gray-600">Create Your Account</p>
+    </div>
+
+    <p-card class="shadow-2xl">
+      <ng-template pTemplate="header">
+        <div class="p-6 pb-0">
+          <h2 class="text-2xl font-semibold text-gray-800">Get Started</h2>
+          <p class="text-gray-600 text-sm mt-1">Fill in your details to create an account</p>
+        </div>
+      </ng-template>
+
+      <form (ngSubmit)="onRegister()" class="space-y-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+              Full Name
+            </label>
+            <input
+              pInputText
+              id="name"
+              type="text"
+              [(ngModel)]="registerData.name"
+              name="name"
+              placeholder="John Doe"
+              required
+              class="w-full"
+              [disabled]="loading"
+            />
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+              Email Address
+            </label>
+            <input
+              pInputText
+              id="email"
+              type="email"
+              [(ngModel)]="registerData.email"
+              name="email"
+              placeholder="john@example.com"
+              required
+              class="w-full"
+              [disabled]="loading"
+            />
+          </div>
+
+          <div>
+            <label for="shopName" class="block text-sm font-medium text-gray-700 mb-2">
+              Shop Name
+            </label>
+            <input
+              pInputText
+              id="shopName"
+              type="text"
+              [(ngModel)]="registerData.shopName"
+              name="shopName"
+              placeholder="My Jewelry Shop"
+              required
+              class="w-full"
+              [disabled]="loading"
+            />
+          </div>
+
+          <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number
+            </label>
+            <input
+              pInputText
+              id="phone"
+              type="tel"
+              [(ngModel)]="registerData.phone"
+              name="phone"
+              placeholder="+1234567890"
+              required
+              class="w-full"
+              [disabled]="loading"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+            Password
+          </label>
+          <p-password
+            [(ngModel)]="registerData.password"
+            name="password"
+            [toggleMask]="true"
+            [feedback]="true"
+            placeholder="Create a strong password"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+            [disabled]="loading"
+          ></p-password>
+        </div>
+
+        <div class="flex items-center justify-center text-sm">
+          <span class="text-gray-600">Already have an account?</span>
+          <a routerLink="/login" class="ml-2 text-indigo-600 hover:text-indigo-800 font-medium">
+            Sign In
+          </a>
+        </div>
+
+        <p-button
+          label="Create Account"
+          icon="pi pi-user-plus"
+          type="submit"
+          [loading]="loading"
+          [disabled]="loading"
+          styleClass="w-full justify-center"
+          severity="primary"
+        ></p-button>
+      </form>
+    </p-card>
+  </div>
+</div>

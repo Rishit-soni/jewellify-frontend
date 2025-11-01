@@ -1,0 +1,17 @@
+::ng-deep .p-drawer {
+  border-radius: 0;
+}
+
+::ng-deep .p-drawer-header {
+  padding: 1.5rem;
+}
+
+::ng-deep .p-drawer-content {
+  padding: 1.5rem;
+}
+
+@media (max-width: 1023px) {
+  ::ng-deep .p-drawer {
+    width: 16rem !important;
+  }
+}

@@ -4,12 +4,15 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import Aura from '@primeuix/themes/aura';
+import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,6 +29,10 @@ export const appConfig: ApplicationConfig = {
         }
       },
     }),
-    provideHttpClient(),
+    provideHttpClient(
+      withInterceptors([jwtInterceptor, errorInterceptor])
+    ),
+    MessageService,
+    ConfirmationService
   ],
 };

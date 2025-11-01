@@ -1,0 +1,23 @@
+::ng-deep .p-tabview .p-tabview-nav {
+  background: transparent;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  padding: 1rem 1.5rem;
+}
+
+::ng-deep .p-inputnumber input {
+  width: 100%;
+}
+
+::ng-deep .p-fileupload .p-fileupload-content {
+  padding: 0;
+  border: none;
+}
+
+::ng-deep .p-fileupload .p-fileupload-buttonbar {
+  padding: 1rem 0;
+  background: transparent;
+  border: none;
+}

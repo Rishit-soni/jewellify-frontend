@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
+import { RouterOutlet } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ButtonModule, CardModule, InputTextModule],
-  templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  imports: [RouterOutlet, ToastModule],
+  template: `
+    <router-outlet></router-outlet>
+    <p-toast position="top-right"></p-toast>
+  `
 })
 export class AppComponent { }

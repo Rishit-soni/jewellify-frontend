@@ -1,4 +1,30 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { LoginComponent } from './features/auth/login/login.component';
+import { RegisterComponent } from './features/auth/register/register.component';
+import { AppLayoutComponent } from './shared/components/layout/app-layout/app-layout.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { ItemListComponent } from './features/inventory/item-list/item-list.component';
+import { ItemFormComponent } from './features/inventory/item-form/item-form.component';
+import { CustomerListComponent } from './features/customers/customer-list.component';
+import { OrderListComponent } from './features/orders/order-list.component';
+
 export const routes: Routes = [
-    // { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  {
+    path: '',
+    component: AppLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'inventory', component: ItemListComponent },
+      { path: 'inventory/add', component: ItemFormComponent },
+      { path: 'inventory/edit/:id', component: ItemFormComponent },
+      { path: 'customers', component: CustomerListComponent },
+      { path: 'orders', component: OrderListComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  },
+  { path: '**', redirectTo: 'login' }
 ];
