@@ -1,19 +1,13 @@
+# jewellify-frontend/netlify.toml
+
 [build]
   # Build command
   command = "npm run build"
   
-  # Publish directory (where Angular outputs the built files)
-  # This should match your latest angular.json output path
-  publish = "dist/angular-playground/browser"
+  # Publish directory (must match angular.json output path)
+  publish = "dist/jewellify/browser"
 
-[[plugins]]
-  package = "@netlify/angular-runtime"
-
-  # The 'disable' flag must be defined within the 'inputs' block
-  [plugins.inputs]
-    disable = true
-
-# Redirects for SPA routing (all routes should serve index.html)
+# Redirects for SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
