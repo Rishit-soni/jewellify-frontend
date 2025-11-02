@@ -12,7 +12,7 @@ export class ItemService {
 
   constructor(private http: HttpClient) { }
 
-  getAllItems(filters: ItemFilters = {}): Observable<any> {
+  getAllItems(filters: ItemFilters = {}): Observable<ItemsResponse> {
     let params = new HttpParams();
 
     if (filters.search) {

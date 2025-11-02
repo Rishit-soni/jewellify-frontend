@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Jewellify": {
+    "jewellify": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/Jewellify",
+            "outputPath": "dist/jewellify",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -41,7 +41,7 @@
                 }
               ],
               "outputHashing": "all",
-              "inlineCriticalCss": false
+              "optimization": false
             },
             "development": {
               "optimization": false,
@@ -55,10 +55,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Jewellify:build:production"
+              "buildTarget": "jewellify:build:production"
             },
             "development": {
-              "buildTarget": "Jewellify:build:development"
+              "buildTarget": "jewellify:build:development"
             }
           },
           "defaultConfiguration": "development"

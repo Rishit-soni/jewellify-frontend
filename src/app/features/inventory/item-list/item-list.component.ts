@@ -12,7 +12,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ItemService } from '../../../core/services/item.service';
-import { Item, ItemFilters } from '../../../core/models/item.model';
+import { Item, ItemFilters, ItemsResponse } from '../../../core/models/item.model';
 
 @Component({
   selector: 'app-item-list',
@@ -34,7 +34,7 @@ import { Item, ItemFilters } from '../../../core/models/item.model';
   providers: [ConfirmationService]
 })
 export class ItemListComponent implements OnInit {
-  items: any[] = [];
+  items: Item[] = [];
   loading = false;
   totalRecords = 0;
 
@@ -68,7 +68,6 @@ export class ItemListComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) { }
-
   ngOnInit(): void {
     this.loadItems();
   }
@@ -76,8 +75,8 @@ export class ItemListComponent implements OnInit {
   loadItems(): void {
     this.loading = true;
     this.itemService.getAllItems(this.filters).subscribe({
-      next: (response) => {
-        this.items = response;
+      next: (response: ItemsResponse) => {
+        this.items = response.items;
         this.totalRecords = response.totalItems;
         this.loading = false;
       },
