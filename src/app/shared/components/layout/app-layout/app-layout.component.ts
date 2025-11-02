@@ -31,38 +31,7 @@ export class AppLayoutComponent implements OnInit {
   sidebarVisible = false;
   currentUser: User | null = null;
   
-  menuItems: MenuItem[] = [
-    {
-      label: 'Dashboard',
-      icon: 'pi pi-home',
-      routerLink: '/dashboard'
-    },
-    {
-      label: 'Inventory',
-      icon: 'pi pi-box',
-      routerLink: '/inventory'
-    },
-    {
-      label: 'Customers',
-      icon: 'pi pi-users',
-      routerLink: '/customers'
-    },
-    {
-      label: 'Orders',
-      icon: 'pi pi-shopping-cart',
-      routerLink: '/orders'
-    },
-    {
-      label: 'Quotations',
-      icon: 'pi pi-file-edit',
-      routerLink: '/quotations'
-    },
-    {
-      label: 'Ledger',
-      icon: 'pi pi-book',
-      routerLink: '/ledger'
-    }
-  ];
+  menuItems: MenuItem[] = [];
 
   profileMenuItems: MenuItem[] = [];
 
@@ -71,23 +40,52 @@ export class AppLayoutComponent implements OnInit {
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      this.updateMenuItems();
     });
+  }
 
-    this.profileMenuItems = [
+  updateMenuItems(): void {
+    this.menuItems = [
       {
+        label: 'Dashboard',
+        icon: 'pi pi-home',
+        routerLink: '/dashboard'
+      },
+      {
+        label: 'Inventory',
+        icon: 'pi pi-box',
+        routerLink: '/inventory'
+      },
+      {
+        label: 'Customers',
+        icon: 'pi pi-users',
+        routerLink: '/customers'
+      },
+      {
+        label: 'Orders',
+        icon: 'pi pi-shopping-cart',
+        routerLink: '/orders'
+      },
+      {
+        label: 'Quotations',
+        icon: 'pi pi-file-edit',
+        routerLink: '/quotations'
+      },
+      {
+        label: 'Ledger',
+        icon: 'pi pi-book',
+        routerLink: '/ledger'
+      }
+    ];
+
+    // Add Settings only for Admin
+    if (this.currentUser?.role === 'Admin') {
+      this.menuItems.push({
         label: 'Settings',
         icon: 'pi pi-cog',
         routerLink: '/settings'
-      },
-      {
-        separator: true
-      },
-      {
-        label: 'Logout',
-        icon: 'pi pi-sign-out',
-        command: () => this.onLogout()
-      }
-    ];
+      });
+    }
   }
 
   toggleSidebar(): void {

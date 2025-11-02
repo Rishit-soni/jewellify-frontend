@@ -1,0 +1,204 @@
+<div class="p-4 md:p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+      <i class="pi pi-cog text-indigo-600"></i>
+      Settings
+    </h1>
+    <p class="text-gray-600">Manage system configuration and users</p>
+  </div>
+
+  <div class="space-y-6">
+    <!-- User Management Section -->
+      <p-card styleClass="shadow-lg border border-gray-100">
+        <ng-template pTemplate="header">
+          <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="pi pi-users text-indigo-600"></i>
+                Users
+              </h3>
+              <p class="text-sm text-gray-600 mt-1">Manage system users and their roles</p>
+            </div>
+            <p-button
+              label="Add User"
+              icon="pi pi-user-plus"
+              (onClick)="openUserDialog()"
+              styleClass="!bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0"
+            ></p-button>
+          </div>
+        </ng-template>
+
+        <p-table [value]="users" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-user>
+            <tr>
+              <td>{{ user.userName }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="px-2 py-1 rounded-md text-xs font-semibold"
+                      [class.bg-green-100]="user.role === 'Admin'"
+                      [class.text-green-800]="user.role === 'Admin'"
+                      [class.bg-blue-100]="user.role === 'Manager'"
+                      [class.text-blue-800]="user.role === 'Manager'">
+                  {{ user.role }}
+                </span>
+              </td>
+              <td>
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  size="small"
+                  severity="secondary"
+                ></p-button>
+                <p-button
+                  icon="pi pi-trash"
+                  [text]="true"
+                  size="small"
+                  severity="danger"
+                ></p-button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-center py-8">
+                <i class="pi pi-users text-4xl text-gray-300 mb-3 block"></i>
+                <p class="text-gray-500">No users found. Click "Add User" to create one.</p>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+  </div>
+</div>
+
+<!-- Add User Dialog -->
+<p-dialog
+  [(visible)]="showUserDialog"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [closable]="true"
+  (onHide)="closeUserDialog()"
+>
+  <ng-template pTemplate="header">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-user-plus text-indigo-600 text-xl"></i>
+      <h3 class="text-xl font-bold text-gray-800">Add New User</h3>
+    </div>
+  </ng-template>
+
+  <form class="space-y-4" (ngSubmit)="createUser()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label for="userName" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="pi pi-user text-indigo-600 mr-2"></i>Full Name *
+        </label>
+        <input
+          pInputText
+          id="userName"
+          [(ngModel)]="newUser.userName"
+          name="userName"
+          placeholder="John Doe"
+          required
+          class="w-full"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div>
+        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="pi pi-envelope text-indigo-600 mr-2"></i>Email *
+        </label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          [(ngModel)]="newUser.email"
+          name="email"
+          placeholder="user@example.com"
+          required
+          class="w-full"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="pi pi-lock text-indigo-600 mr-2"></i>Password *
+        </label>
+        <input
+          pInputText
+          id="password"
+          type="password"
+          [(ngModel)]="newUser.password"
+          name="password"
+          placeholder="Enter password"
+          required
+          class="w-full"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div>
+        <label for="role" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="pi pi-shield text-indigo-600 mr-2"></i>Role *
+        </label>
+        <p-select
+          id="role"
+          [(ngModel)]="newUser.role"
+          name="role"
+          [options]="roleOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select role"
+          styleClass="w-full"
+          [disabled]="loading"
+        ></p-select>
+      </div>
+
+      <div>
+        <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="pi pi-phone text-indigo-600 mr-2"></i>Phone
+        </label>
+        <input
+          pInputText
+          id="phone"
+          type="tel"
+          [(ngModel)]="newUser.phone"
+          name="phone"
+          placeholder="+91-9876543210"
+          class="w-full"
+          [disabled]="loading"
+        />
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex gap-2 justify-end">
+      <p-button
+        label="Cancel"
+        icon="pi pi-times"
+        (onClick)="closeUserDialog()"
+        [outlined]="true"
+        severity="secondary"
+        [disabled]="loading"
+      ></p-button>
+      <p-button
+        label="Create User"
+        icon="pi pi-check"
+        (onClick)="createUser()"
+        [loading]="loading"
+        [disabled]="loading"
+        styleClass="!bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

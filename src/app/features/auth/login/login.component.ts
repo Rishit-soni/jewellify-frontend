@@ -16,7 +16,6 @@ import { LoginRequest } from '../../../core/models/auth.model';
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink,
     CardModule,
     InputTextModule,
     ButtonModule,

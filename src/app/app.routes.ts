@@ -1,17 +1,17 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 import { LoginComponent } from './features/auth/login/login.component';
-import { RegisterComponent } from './features/auth/register/register.component';
 import { AppLayoutComponent } from './shared/components/layout/app-layout/app-layout.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { ItemListComponent } from './features/inventory/item-list/item-list.component';
 import { ItemFormComponent } from './features/inventory/item-form/item-form.component';
 import { CustomerListComponent } from './features/customers/customer-list.component';
 import { OrderListComponent } from './features/orders/order-list.component';
+import { SettingsComponent } from './features/settings/settings.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
   {
     path: '',
     component: AppLayoutComponent,
@@ -23,6 +23,7 @@ export const routes: Routes = [
       { path: 'inventory/edit/:id', component: ItemFormComponent },
       { path: 'customers', component: CustomerListComponent },
       { path: 'orders', component: OrderListComponent },
+      { path: 'settings', component: SettingsComponent, canActivate: [adminGuard] },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

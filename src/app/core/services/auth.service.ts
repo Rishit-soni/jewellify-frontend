@@ -32,13 +32,7 @@ export class AuthService {
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/register`, userData).pipe(
-      tap(response => {
-        this.saveToken(response.token);
-        this.saveUser(response.user);
-        this.currentUserSubject.next(response.user);
-      })
-    );
+    return this.http.post<AuthResponse>(`${this.API_URL}/register`, userData);
   }
 
   logout(): void {
