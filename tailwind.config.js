@@ -2,11 +2,13 @@
 module.exports = {
   content: [
     './src/**/*.{html,ts}',
-    './src/app/**/*.html',
-    './src/app/**/*.ts',
   ],
+  important: true,
   theme: {
     extend: {},
   },
   plugins: [],
+  corePlugins: {
+    preflight: true,
+  }
 }
