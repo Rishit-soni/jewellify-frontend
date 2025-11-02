@@ -2,15 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
-import { TabsModule } from 'primeng/tabs';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
+import { TagModule } from 'primeng/tag';
 import { MessageService } from 'primeng/api';
-import { AuthService } from '../../core/services/auth.service';
-import { RegisterRequest } from '../../core/models/auth.model';
+import { UserService, CreateUserRequest, User } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-settings',
@@ -19,44 +18,39 @@ import { RegisterRequest } from '../../core/models/auth.model';
     CommonModule,
     FormsModule,
     CardModule,
-    TabsModule,
     InputTextModule,
     ButtonModule,
     TableModule,
     DialogModule,
-    SelectModule
+    SelectModule,
+    TagModule,
   ],
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+  styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent implements OnInit {
   showUserDialog = false;
   loading = false;
 
-  newUser: RegisterRequest = {
+  newUser: CreateUserRequest = {
     userName: '',
     email: '',
     password: '',
     role: 'Manager',
-    businessName: '',
-    ownerName: '',
-    phone: ''
+    phone: '',
   };
 
   roleOptions = [
-    { label: 'Admin', value: 'Admin' },
-    { label: 'Manager', value: 'Manager' }
+    { label: 'Manager', value: 'Manager' },
+    { label: 'Staff', value: 'Staff' },
   ];
 
-  users: any[] = [];
+  users: User[] = [];
 
-  constructor(
-    private authService: AuthService,
-    private messageService: MessageService
-  ) {}
+  constructor(private userService: UserService, private messageService: MessageService) {}
 
   ngOnInit(): void {
-    // TODO: Load users from API when endpoint is available
+    this.loadUsers();
   }
 
   openUserDialog(): void {
@@ -75,10 +69,25 @@ export class SettingsComponent implements OnInit {
       email: '',
       password: '',
       role: 'Manager',
-      businessName: '',
-      ownerName: '',
-      phone: ''
+      phone: '',
     };
+  }
+
+  loadUsers(): void {
+    this.userService.getAllUsers().subscribe({
+      next: (response) => {
+        this.users = response.users;
+        console.log('Loaded users:', this.users);
+      },
+      error: (err: any) => {
+        console.error('Error loading users:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err.error?.message || 'Failed to load users',
+        });
+      },
+    });
   }
 
   createUser(): void {
@@ -86,31 +95,44 @@ export class SettingsComponent implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validation Error',
-        detail: 'Please fill all required fields'
+        detail: 'Please fill all required fields (Name, Email, Password, Role)',
+      });
+      return;
+    }
+
+    if (this.newUser.password.length < 6) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validation Error',
+        detail: 'Password must be at least 6 characters long',
       });
       return;
     }
 
     this.loading = true;
-    this.authService.register(this.newUser).subscribe({
-      next: () => {
+    console.log('Creating user:', this.newUser);
+
+    this.userService.createUser(this.newUser).subscribe({
+      next: (response) => {
+        console.log('User created successfully:', response);
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'User created successfully!'
+          detail: `User ${response.user.userName} created successfully!`,
         });
         this.closeUserDialog();
         this.loading = false;
-        // TODO: Reload users list
+        this.loadUsers();
       },
-      error: (err) => {
+      error: (err: any) => {
+        console.error('Error creating user:', err);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: err.userMessage || 'Failed to create user'
+          detail: err.error?.message || err.userMessage || 'Failed to create user',
         });
         this.loading = false;
-      }
+      },
     });
   }
 }

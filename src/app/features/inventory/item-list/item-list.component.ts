@@ -10,6 +10,7 @@ import { TagModule } from 'primeng/tag';
 import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ItemService } from '../../../core/services/item.service';
 import { Item, ItemFilters, ItemsResponse } from '../../../core/models/item.model';
@@ -27,39 +28,35 @@ import { Item, ItemFilters, ItemsResponse } from '../../../core/models/item.mode
     TagModule,
     CardModule,
     ConfirmDialogModule,
-    TooltipModule
+    TooltipModule,
+    SkeletonModule,
   ],
   templateUrl: './item-list.component.html',
   styleUrls: ['./item-list.component.css'],
-  providers: [ConfirmationService]
+  providers: [ConfirmationService],
 })
 export class ItemListComponent implements OnInit {
   items: Item[] = [];
   loading = false;
   totalRecords = 0;
+  skeletonItems = Array(10).fill({});
 
   filters: ItemFilters = {
     search: '',
     category: '',
-    stockStatus: undefined,
     page: 1,
-    limit: 10
+    limit: 10,
   };
 
   categories = [
     { label: 'All Categories', value: '' },
     { label: 'Ring', value: 'Ring' },
+    { label: 'Gents Ring', value: 'Gents ring' },
+    { label: 'Ladies Ring', value: 'Ladies ring' },
     { label: 'Necklace', value: 'Necklace' },
     { label: 'Earring', value: 'Earring' },
     { label: 'Bracelet', value: 'Bracelet' },
-    { label: 'Pendant', value: 'Pendant' }
-  ];
-
-  stockStatuses = [
-    { label: 'All Stock Status', value: '' },
-    { label: 'In Stock', value: 'inStock' },
-    { label: 'Low Stock', value: 'lowStock' },
-    { label: 'Out of Stock', value: 'outOfStock' }
+    { label: 'Pendant', value: 'Pendant' },
   ];
 
   constructor(
@@ -67,7 +64,7 @@ export class ItemListComponent implements OnInit {
     private router: Router,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
-  ) { }
+  ) {}
   ngOnInit(): void {
     this.loadItems();
   }
@@ -84,10 +81,10 @@ export class ItemListComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: err.userMessage || 'Failed to load items'
+          detail: err.userMessage || 'Failed to load items',
         });
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -101,27 +98,10 @@ export class ItemListComponent implements OnInit {
     this.loadItems();
   }
 
-  onStockStatusChange(): void {
-    this.filters.page = 1;
-    this.loadItems();
-  }
-
   onPageChange(event: any): void {
     this.filters.page = event.first / event.rows + 1;
     this.filters.limit = event.rows;
     this.loadItems();
-  }
-
-  getStockSeverity(stockQty: number): 'success' | 'danger' | 'warn' {
-    if (stockQty === 0) return 'danger';
-    if (stockQty <= 5) return 'warn';
-    return 'success';
-  }
-
-  getStockLabel(stockQty: number): string {
-    if (stockQty === 0) return 'Out of Stock';
-    if (stockQty <= 5) return 'Low Stock';
-    return 'In Stock';
   }
 
   onAddItem(): void {
@@ -143,7 +123,7 @@ export class ItemListComponent implements OnInit {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'Item deleted successfully'
+              detail: 'Item deleted successfully',
             });
             this.loadItems();
           },
@@ -151,11 +131,11 @@ export class ItemListComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: err.userMessage || 'Failed to delete item'
+              detail: err.userMessage || 'Failed to delete item',
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 
@@ -163,9 +143,8 @@ export class ItemListComponent implements OnInit {
     this.filters = {
       search: '',
       category: '',
-      stockStatus: undefined,
       page: 1,
-      limit: 10
+      limit: 10,
     };
     this.loadItems();
   }

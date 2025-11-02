@@ -17,7 +17,6 @@ export interface Item {
 export interface ItemFilters {
   search?: string;
   category?: string;
-  stockStatus?: 'inStock' | 'lowStock' | 'outOfStock';
   page?: number;
   limit?: number;
 }
@@ -30,7 +29,6 @@ export interface ItemsResponse {
 }
 
 export interface CreateItemRequest {
-  itemCode: string;
   name: string;
   category: string;
   source: string;
@@ -38,5 +36,4 @@ export interface CreateItemRequest {
   grossWeight: number;
   netWeight: number;
   huid: string;
-  stockQty: number;
 }

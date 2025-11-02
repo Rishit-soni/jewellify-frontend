@@ -28,7 +28,47 @@
           </div>
         </ng-template>
 
-        <p-table [value]="users" styleClass="p-datatable-sm">
+        <!-- Mobile Card View -->
+        <div class="md:hidden space-y-3">
+          <div *ngFor="let user of users" class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div class="flex justify-between items-start mb-3">
+              <div class="flex-1">
+                <div class="font-bold text-gray-800 text-lg mb-1">{{ user.userName }}</div>
+                <div class="text-sm text-gray-600 mb-2">{{ user.email }}</div>
+                <p-tag 
+                  [value]="user.role"
+                  [severity]="user.role === 'Admin' ? 'success' : user.role === 'Manager' ? 'info' : 'secondary'"
+                ></p-tag>
+              </div>
+            </div>
+            
+            <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
+              <p-button
+                icon="pi pi-pencil"
+                label="Edit"
+                [outlined]="true"
+                size="small"
+                severity="info"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                label="Delete"
+                [outlined]="true"
+                size="small"
+                severity="danger"
+              ></p-button>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div *ngIf="users.length === 0" class="text-center py-12">
+            <i class="pi pi-users text-6xl text-gray-300 mb-4 block"></i>
+            <p class="text-gray-500">No users found. Click "Add User" to create one.</p>
+          </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <p-table [value]="users" styleClass="p-datatable-sm hidden md:table">
           <ng-template pTemplate="header">
             <tr>
               <th>Name</th>
@@ -42,20 +82,17 @@
               <td>{{ user.userName }}</td>
               <td>{{ user.email }}</td>
               <td>
-                <span class="px-2 py-1 rounded-md text-xs font-semibold"
-                      [class.bg-green-100]="user.role === 'Admin'"
-                      [class.text-green-800]="user.role === 'Admin'"
-                      [class.bg-blue-100]="user.role === 'Manager'"
-                      [class.text-blue-800]="user.role === 'Manager'">
-                  {{ user.role }}
-                </span>
+                <p-tag 
+                  [value]="user.role"
+                  [severity]="user.role === 'Admin' ? 'success' : user.role === 'Manager' ? 'info' : 'secondary'"
+                ></p-tag>
               </td>
               <td>
                 <p-button
                   icon="pi pi-pencil"
                   [text]="true"
                   size="small"
-                  severity="secondary"
+                  severity="info"
                 ></p-button>
                 <p-button
                   icon="pi pi-trash"
@@ -139,7 +176,7 @@
           type="password"
           [(ngModel)]="newUser.password"
           name="password"
-          placeholder="Enter password"
+          placeholder="Enter password (min 6 characters)"
           required
           class="w-full"
           [disabled]="loading"
@@ -163,7 +200,7 @@
         ></p-select>
       </div>
 
-      <div>
+      <div class="md:col-span-2">
         <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">
           <i class="pi pi-phone text-indigo-600 mr-2"></i>Phone
         </label>
@@ -173,7 +210,7 @@
           type="tel"
           [(ngModel)]="newUser.phone"
           name="phone"
-          placeholder="+91-9876543210"
+          placeholder="9876543210"
           class="w-full"
           [disabled]="loading"
         />

@@ -21,9 +21,6 @@ export class ItemService {
     if (filters.category) {
       params = params.set('category', filters.category);
     }
-    if (filters.stockStatus) {
-      params = params.set('stockStatus', filters.stockStatus);
-    }
     if (filters.page) {
       params = params.set('page', filters.page.toString());
     }

@@ -1,0 +1,67 @@
+/* Overlay */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(17, 24, 39, 0.9);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Dots Container */
+.dots-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dot Animation */
+.dot {
+  width: 20px;
+  height: 20px;
+  margin: 0 10px;
+  background: linear-gradient(135deg, var(--primary-color), #a78bfa);
+  border-radius: 50%;
+  animation: wave 1.5s infinite ease-in-out;
+}
+
+.dot:nth-child(1) {
+  animation-delay: -0.3s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: -0.15s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0s;
+}
+
+@keyframes wave {
+  0%, 60%, 100% {
+    transform: initial;
+  }
+  30% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .dot {
+    width: 16px;
+    height: 16px;
+    margin: 0 8px;
+  }
+}

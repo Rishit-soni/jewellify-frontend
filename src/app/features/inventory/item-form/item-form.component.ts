@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TabsModule } from 'primeng/tabs';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
@@ -20,21 +19,19 @@ import { CreateItemRequest } from '../../../core/models/item.model';
   imports: [
     CommonModule,
     FormsModule,
-    TabsModule,
     InputTextModule,
     InputNumberModule,
     TextareaModule,
     SelectModule,
     FileUploadModule,
     ButtonModule,
-    CardModule
+    CardModule,
   ],
   templateUrl: './item-form.component.html',
-  styleUrls: ['./item-form.component.css']
+  styleUrls: ['./item-form.component.css'],
 })
 export class ItemFormComponent implements OnInit {
   itemData: CreateItemRequest = {
-    itemCode: '',
     name: '',
     category: '',
     source: '',
@@ -42,7 +39,6 @@ export class ItemFormComponent implements OnInit {
     grossWeight: 0,
     netWeight: 0,
     huid: '',
-    stockQty: 1
   };
 
   files: File[] = [];
@@ -51,12 +47,13 @@ export class ItemFormComponent implements OnInit {
   itemId: string | null = null;
 
   categories = [
-    { label: 'Ring', value: 'Ring' },
+    { label: 'Gents Ring', value: 'Gents ring' },
+    { label: 'Ladies Ring', value: 'Ladies ring' },
     { label: 'Necklace', value: 'Necklace' },
     { label: 'Earring', value: 'Earring' },
     { label: 'Bracelet', value: 'Bracelet' },
     { label: 'Pendant', value: 'Pendant' },
-    { label: 'Anklet', value: 'Anklet' }
+    { label: 'Anklet', value: 'Anklet' },
   ];
 
   constructor(
@@ -76,12 +73,11 @@ export class ItemFormComponent implements OnInit {
 
   loadItem(): void {
     if (!this.itemId) return;
-    
+
     this.loading = true;
     this.itemService.getItemById(this.itemId).subscribe({
       next: (item) => {
         this.itemData = {
-          itemCode: item.itemCode,
           name: item.name,
           category: item.category,
           source: item.source,
@@ -89,7 +85,6 @@ export class ItemFormComponent implements OnInit {
           grossWeight: item.grossWeight,
           netWeight: item.netWeight,
           huid: item.huid,
-          stockQty: item.stockQty
         };
         this.loading = false;
       },
@@ -97,11 +92,11 @@ export class ItemFormComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: err.userMessage || 'Failed to load item'
+          detail: err.userMessage || 'Failed to load item',
         });
         this.loading = false;
         this.router.navigate(['/inventory']);
-      }
+      },
     });
   }
 
@@ -110,7 +105,7 @@ export class ItemFormComponent implements OnInit {
   }
 
   onRemoveFile(event: any): void {
-    this.files = this.files.filter(f => f !== event.file);
+    this.files = this.files.filter((f) => f !== event.file);
   }
 
   onSaveItem(): void {
@@ -121,27 +116,28 @@ export class ItemFormComponent implements OnInit {
     this.loading = true;
     const formData = new FormData();
 
-    Object.keys(this.itemData).forEach(key => {
+    Object.keys(this.itemData).forEach((key) => {
       const value = (this.itemData as any)[key];
       if (value !== null && value !== undefined) {
         formData.append(key, value.toString());
       }
     });
 
-    this.files.slice(0, 5).forEach(file => {
+    this.files.slice(0, 5).forEach((file) => {
       formData.append('images', file, file.name);
     });
 
-    const request$ = this.isEditMode && this.itemId
-      ? this.itemService.updateItem(this.itemId, formData)
-      : this.itemService.createItem(formData);
+    const request$ =
+      this.isEditMode && this.itemId
+        ? this.itemService.updateItem(this.itemId, formData)
+        : this.itemService.createItem(formData);
 
     request$.subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: `Item ${this.isEditMode ? 'updated' : 'created'} successfully`
+          detail: `Item ${this.isEditMode ? 'updated' : 'created'} successfully`,
         });
         this.router.navigate(['/inventory']);
       },
@@ -149,21 +145,21 @@ export class ItemFormComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: err.userMessage || `Failed to ${this.isEditMode ? 'update' : 'create'} item`
+          detail: err.userMessage || `Failed to ${this.isEditMode ? 'update' : 'create'} item`,
         });
         this.loading = false;
-      }
+      },
     });
   }
 
   validateForm(): boolean {
-    const { itemCode, name, category, source, grossWeight, netWeight, huid, stockQty } = this.itemData;
+    const { name, category, source, grossWeight, netWeight, huid } = this.itemData;
 
-    if (!itemCode || !name || !category || !source || !huid) {
+    if (!name || !category || !source || !huid) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validation Error',
-        detail: 'Please fill in all required fields'
+        detail: 'Please fill in all required fields',
       });
       return false;
     }
@@ -172,25 +168,7 @@ export class ItemFormComponent implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validation Error',
-        detail: 'Weight must be greater than 0'
-      });
-      return false;
-    }
-
-    if (stockQty < 0) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Validation Error',
-        detail: 'Stock quantity cannot be negative'
-      });
-      return false;
-    }
-
-    if (!this.isEditMode && this.files.length === 0) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Validation Error',
-        detail: 'Please upload at least one image'
+        detail: 'Weight must be greater than 0',
       });
       return false;
     }
@@ -199,7 +177,7 @@ export class ItemFormComponent implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: 'Validation Error',
-        detail: 'Maximum 5 images allowed'
+        detail: 'Maximum 5 images allowed',
       });
       return false;
     }
