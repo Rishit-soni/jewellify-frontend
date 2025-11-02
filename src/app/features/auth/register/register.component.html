@@ -117,11 +117,11 @@
           type="submit"
           [loading]="loading"
           [disabled]="loading"
-          styleClass="w-full justify-center"
+          styleClass="w-full mt-6 justify-center"
           severity="primary"
         ></p-button>
 
-        <div class="relative">
+        <div class="relative my-6">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-gray-300"></div>
           </div>
@@ -134,9 +134,7 @@
           label="Sign In"
           icon="pi pi-sign-in"
           routerLink="/login"
-          [outlined]="true"
-          styleClass="w-full justify-center"
-          severity="secondary"
+          styleClass="w-full mt-6 justify-center !bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0 hover:!from-indigo-700 hover:!to-purple-700 !text-white"
         ></p-button>
       </form>
     </p-card>
