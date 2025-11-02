@@ -3,12 +3,15 @@
   command = "npm run build"
   
   # Publish directory (where Angular outputs the built files)
+  # This should match your latest angular.json output path
   publish = "dist/angular-playground/browser"
 
-# Disable the Netlify Angular Runtime plugin to avoid schema validation issues
 [[plugins]]
   package = "@netlify/angular-runtime"
-  disable = true
+
+  # The 'disable' flag must be defined within the 'inputs' block
+  [plugins.inputs]
+    disable = true
 
 # Redirects for SPA routing (all routes should serve index.html)
 [[redirects]]
