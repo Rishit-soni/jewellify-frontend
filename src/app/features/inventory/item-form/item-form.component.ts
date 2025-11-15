@@ -11,6 +11,8 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { MessageService } from 'primeng/api';
 import { ItemService } from '../../../core/services/item.service';
+import { CategoryService } from '../../../core/services/category.service';
+import { Category } from '../../../core/models/category.model';
 import { CreateItemRequest } from '../../../core/models/item.model';
 
 @Component({
@@ -45,23 +47,16 @@ export class ItemFormComponent implements OnInit {
   loading = false;
   isEditMode = false;
   itemId: string | null = null;
-
-  categories = [
-    { label: 'Gents Ring', value: 'Gents ring' },
-    { label: 'Ladies Ring', value: 'Ladies ring' },
-    { label: 'Necklace', value: 'Necklace' },
-    { label: 'Earring', value: 'Earring' },
-    { label: 'Bracelet', value: 'Bracelet' },
-    { label: 'Pendant', value: 'Pendant' },
-    { label: 'Anklet', value: 'Anklet' },
-  ];
+  categories: Category[] = [];
+  categoryOptions: any[] = [];
 
   constructor(
     private itemService: ItemService,
+    private categoryService: CategoryService,
     private router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.itemId = this.route.snapshot.paramMap.get('id');
@@ -69,6 +64,7 @@ export class ItemFormComponent implements OnInit {
       this.isEditMode = true;
       this.loadItem();
     }
+    this.loadCategories();
   }
 
   loadItem(): void {
@@ -96,6 +92,26 @@ export class ItemFormComponent implements OnInit {
         });
         this.loading = false;
         this.router.navigate(['/inventory']);
+      },
+    });
+  }
+
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (response) => {
+        this.categories = response.categories;
+        this.categoryOptions = this.categories.map(category => ({
+          label: category.name,
+          value: category.name
+        }));
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load categories',
+        });
       },
     });
   }

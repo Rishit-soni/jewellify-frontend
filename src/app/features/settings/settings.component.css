@@ -1,1 +1,22 @@
 /* Settings Component Styles */
+
+/* Make table take full width */
+.p-datatable {
+  width: 100% !important;
+}
+
+.p-datatable .p-datatable-wrapper {
+  overflow-x: auto;
+}
+
+.p-datatable table {
+  width: 100%;
+  min-width: 600px;
+}
+
+/* Responsive table adjustments */
+@media (max-width: 768px) {
+  .p-datatable table {
+    min-width: 100%;
+  }
+}

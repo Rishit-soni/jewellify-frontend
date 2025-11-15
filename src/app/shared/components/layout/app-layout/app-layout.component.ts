@@ -30,12 +30,12 @@ import { User } from '../../../../core/models/auth.model';
 export class AppLayoutComponent implements OnInit {
   sidebarVisible = false;
   currentUser: User | null = null;
-  
+
   menuItems: MenuItem[] = [];
 
   profileMenuItems: MenuItem[] = [];
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
@@ -78,14 +78,12 @@ export class AppLayoutComponent implements OnInit {
       }
     ];
 
-    // Add Settings only for Admin
-    if (this.currentUser?.role === 'Admin') {
-      this.menuItems.push({
-        label: 'Settings',
-        icon: 'pi pi-cog',
-        routerLink: '/settings'
-      });
-    }
+    // Add Settings for all authenticated users
+    this.menuItems.push({
+      label: 'Settings',
+      icon: 'pi pi-cog',
+      routerLink: '/settings'
+    });
   }
 
   toggleSidebar(): void {

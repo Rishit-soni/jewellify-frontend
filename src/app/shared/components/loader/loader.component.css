@@ -15,53 +15,39 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* Dots Container */
-.dots-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Dot Animation */
-.dot {
+/* HTML: <div class="loader"></div> */
+.loader {
   width: 20px;
-  height: 20px;
-  margin: 0 10px;
-  background: linear-gradient(135deg, var(--primary-color), #a78bfa);
+  aspect-ratio: 1;
   border-radius: 50%;
-  animation: wave 1.5s infinite ease-in-out;
+  background: #fff;
+  box-shadow: 0 0 0 0 #fff;
+  animation: l2 1.5s infinite linear;
+  position: relative;
 }
-
-.dot:nth-child(1) {
-  animation-delay: -0.3s;
+.loader:before,
+.loader:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 #0004;
+  animation: inherit;
+  animation-delay: -0.5s;
 }
-
-.dot:nth-child(2) {
-  animation-delay: -0.15s;
+.loader:after {
+  animation-delay: -1s;
 }
-
-.dot:nth-child(3) {
-  animation-delay: 0s;
-}
-
-@keyframes wave {
-  0%, 60%, 100% {
-    transform: initial;
-  }
-  30% {
-    transform: translateY(-20px);
-  }
-}
-
-/* Responsive */
-@media (max-width: 640px) {
-  .dot {
-    width: 16px;
-    height: 16px;
-    margin: 0 8px;
+@keyframes l2 {
+  100% {
+    box-shadow: 0 0 0 40px #0000;
   }
 }

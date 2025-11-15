@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, RegisterRequest, AuthResponse, User } from '../models/auth.model';
+import { LoginRequest, RegisterRequest, AuthResponse, User, ChangePasswordRequest } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router
-  ) {}
+  ) { }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
@@ -65,5 +65,9 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+
+  changePassword(passwordData: ChangePasswordRequest): Observable<any> {
+    return this.http.post(`${this.API_URL}/change-password`, passwordData);
   }
 }

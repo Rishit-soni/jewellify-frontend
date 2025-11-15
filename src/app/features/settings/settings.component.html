@@ -8,111 +8,339 @@
   </div>
 
   <div class="space-y-6">
-    <!-- User Management Section -->
-      <p-card styleClass="shadow-lg border border-gray-100">
-        <ng-template pTemplate="header">
-          <div class="p-4 border-b border-gray-100 flex items-center justify-between">
-            <div>
-              <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                <i class="pi pi-users text-indigo-600"></i>
-                Users
-              </h3>
-              <p class="text-sm text-gray-600 mt-1">Manage system users and their roles</p>
-            </div>
-            <p-button
-              label="Add User"
-              icon="pi pi-user-plus"
-              (onClick)="openUserDialog()"
-              styleClass="!bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0"
-            ></p-button>
-          </div>
-        </ng-template>
+    <!-- Change Password Section -->
+    <p-card styleClass="shadow-lg border border-gray-100">
+      <ng-template pTemplate="header">
+        <div class="p-4 border-b border-gray-100">
+          <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+            <i class="pi pi-lock text-indigo-600"></i>
+            Change Password
+          </h3>
+          <p class="text-sm text-gray-600 mt-1">Update your account password</p>
+        </div>
+      </ng-template>
 
-        <!-- Mobile Card View -->
-        <div class="md:hidden space-y-3">
-          <div *ngFor="let user of users" class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <div class="flex justify-between items-start mb-3">
-              <div class="flex-1">
-                <div class="font-bold text-gray-800 text-lg mb-1">{{ user.userName }}</div>
-                <div class="text-sm text-gray-600 mb-2">{{ user.email }}</div>
-                <p-tag 
-                  [value]="user.role"
-                  [severity]="user.role === 'Admin' ? 'success' : user.role === 'Manager' ? 'info' : 'secondary'"
-                ></p-tag>
-              </div>
-            </div>
-            
-            <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
-              <p-button
-                icon="pi pi-pencil"
-                label="Edit"
-                [outlined]="true"
-                size="small"
-                severity="info"
-              ></p-button>
-              <p-button
-                icon="pi pi-trash"
-                label="Delete"
-                [outlined]="true"
-                size="small"
-                severity="danger"
-              ></p-button>
+      <form class="p-4 space-y-4" (ngSubmit)="changePassword()" #passwordForm="ngForm">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="relative">
+            <label for="currentPassword" class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="pi pi-key text-indigo-600 mr-2"></i>Current Password *
+            </label>
+            <div class="relative">
+              <input
+                pInputText
+                id="currentPassword"
+                [type]="showCurrentPassword ? 'text' : 'password'"
+                [(ngModel)]="passwordData.currentPassword"
+                name="currentPassword"
+                placeholder="Enter current password"
+                required
+                class="w-full pr-10"
+                [disabled]="passwordLoading"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                (click)="togglePasswordVisibility('current')"
+                [disabled]="passwordLoading"
+              >
+                <i
+                  [class]="showCurrentPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                  class="text-gray-400"
+                ></i>
+              </button>
             </div>
           </div>
 
-          <!-- Empty State -->
-          <div *ngIf="users.length === 0" class="text-center py-12">
-            <i class="pi pi-users text-6xl text-gray-300 mb-4 block"></i>
-            <p class="text-gray-500">No users found. Click "Add User" to create one.</p>
+          <div class="relative">
+            <label for="newPassword" class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="pi pi-lock text-indigo-600 mr-2"></i>New Password *
+            </label>
+            <div class="relative">
+              <input
+                pInputText
+                id="newPassword"
+                [type]="showNewPassword ? 'text' : 'password'"
+                [(ngModel)]="passwordData.newPassword"
+                name="newPassword"
+                placeholder="Enter new password (min 6 chars)"
+                required
+                class="w-full pr-10"
+                [disabled]="passwordLoading"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                (click)="togglePasswordVisibility('new')"
+                [disabled]="passwordLoading"
+              >
+                <i
+                  [class]="showNewPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                  class="text-gray-400"
+                ></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="relative">
+            <label for="confirmNewPassword" class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="pi pi-check-circle text-indigo-600 mr-2"></i>Confirm New Password *
+            </label>
+            <div class="relative">
+              <input
+                pInputText
+                id="confirmNewPassword"
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                [(ngModel)]="passwordData.confirmNewPassword"
+                name="confirmNewPassword"
+                placeholder="Confirm new password"
+                required
+                class="w-full pr-10"
+                [disabled]="passwordLoading"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                (click)="togglePasswordVisibility('confirm')"
+                [disabled]="passwordLoading"
+              >
+                <i
+                  [class]="showConfirmPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                  class="text-gray-400"
+                ></i>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Desktop Table View -->
-        <p-table [value]="users" styleClass="p-datatable-sm hidden md:table">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Actions</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-user>
-            <tr>
-              <td>{{ user.userName }}</td>
-              <td>{{ user.email }}</td>
-              <td>
-                <p-tag 
-                  [value]="user.role"
-                  [severity]="user.role === 'Admin' ? 'success' : user.role === 'Manager' ? 'info' : 'secondary'"
-                ></p-tag>
-              </td>
-              <td>
-                <p-button
-                  icon="pi pi-pencil"
-                  [text]="true"
-                  size="small"
-                  severity="info"
-                ></p-button>
-                <p-button
-                  icon="pi pi-trash"
-                  [text]="true"
-                  size="small"
-                  severity="danger"
-                ></p-button>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="4" class="text-center py-8">
-                <i class="pi pi-users text-4xl text-gray-300 mb-3 block"></i>
-                <p class="text-gray-500">No users found. Click "Add User" to create one.</p>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-card>
+        <div class="flex justify-end">
+          <p-button
+            label="Update Password"
+            icon="pi pi-save"
+            type="submit"
+            [loading]="passwordLoading"
+            [disabled]="passwordLoading"
+            styleClass="!bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0"
+          ></p-button>
+        </div>
+      </form>
+    </p-card>
+
+    <!-- User Management Section (Admin Only) -->
+    <p-card *ngIf="currentUserRole === 'Admin'" styleClass="shadow-lg border border-gray-100">
+      <ng-template pTemplate="header">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <i class="pi pi-users text-indigo-600"></i>
+              Users
+            </h3>
+            <p class="text-sm text-gray-600 mt-1">Manage system users and their roles</p>
+          </div>
+          <p-button
+            *ngIf="currentUserRole === 'Admin'"
+            label="Add User"
+            icon="pi pi-user-plus"
+            (onClick)="openUserDialog()"
+            styleClass="!bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0"
+          ></p-button>
+        </div>
+      </ng-template>
+
+      <!-- Mobile Card View -->
+      <div class="md:hidden space-y-3">
+        <div
+          *ngFor="let user of users"
+          class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+        >
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <div class="font-bold text-gray-800 text-lg mb-1">{{ user.userName }}</div>
+              <div class="text-sm text-gray-600 mb-2">{{ user.email }}</div>
+              <p-tag
+                [value]="user.role"
+                [severity]="
+                  user.role === 'Admin' ? 'success' : user.role === 'Manager' ? 'info' : 'secondary'
+                "
+              ></p-tag>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
+            <p-button
+              icon="pi pi-pencil"
+              label="Edit"
+              [outlined]="true"
+              size="small"
+              severity="info"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              label="Delete"
+              [outlined]="true"
+              size="small"
+              severity="danger"
+            ></p-button>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="users.length === 0" class="text-center py-12">
+          <i class="pi pi-users text-6xl text-gray-300 mb-4 block"></i>
+          <p class="text-gray-500">No users found. Click "Add User" to create one.</p>
+        </div>
+      </div>
+
+      <!-- Desktop Table View -->
+      <p-table [value]="users" styleClass="p-datatable-sm hidden md:table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>{{ user.userName }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <p-tag
+                [value]="user.role"
+                [severity]="
+                  user.role === 'Admin' ? 'success' : user.role === 'Manager' ? 'info' : 'secondary'
+                "
+              ></p-tag>
+            </td>
+            <td>
+              <p-button icon="pi pi-pencil" [text]="true" size="small" severity="info"></p-button>
+              <p-button icon="pi pi-trash" [text]="true" size="small" severity="danger"></p-button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center py-8">
+              <i class="pi pi-users text-4xl text-gray-300 mb-3 block"></i>
+              <p class="text-gray-500">No users found. Click "Add User" to create one.</p>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+
+    <!-- Category Management Section (Admin Only) -->
+    <p-card *ngIf="currentUserRole === 'Admin'" styleClass="shadow-lg border border-gray-100">
+      <ng-template pTemplate="header">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <i class="pi pi-tags text-indigo-600"></i>
+              Categories
+            </h3>
+            <p class="text-sm text-gray-600 mt-1">Manage jewelry item categories</p>
+          </div>
+          <p-button
+            label="Add Category"
+            icon="pi pi-plus"
+            (onClick)="openCategoryDialog()"
+            styleClass="!bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0"
+          ></p-button>
+        </div>
+      </ng-template>
+
+      <!-- Mobile Card View -->
+      <div class="md:hidden space-y-3">
+        <div
+          *ngFor="let category of categories"
+          class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+        >
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <div class="font-bold text-gray-800 text-lg mb-1">{{ category.name }}</div>
+              <div class="text-sm text-gray-600">
+                Created: {{ category.createdAt | date : 'short' }}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
+            <p-button
+              icon="pi pi-pencil"
+              label="Edit"
+              (onClick)="openCategoryDialog(category)"
+              [outlined]="true"
+              size="small"
+              severity="info"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              label="Delete"
+              (onClick)="deleteCategory(category)"
+              [outlined]="true"
+              size="small"
+              severity="danger"
+            ></p-button>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="categories.length === 0" class="text-center py-12">
+          <i class="pi pi-tags text-6xl text-gray-300 mb-4 block"></i>
+          <p class="text-gray-500">No categories found. Click "Add Category" to create one.</p>
+        </div>
+      </div>
+
+      <!-- Desktop Table View -->
+      <p-table [value]="categories" styleClass="p-datatable-sm hidden md:table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Category Name</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-category>
+          <tr>
+            <td>
+              <div class="font-medium">{{ category.name }}</div>
+            </td>
+            <td>
+              <span class="text-sm text-gray-600">{{ category.createdAt | date : 'short' }}</span>
+            </td>
+            <td>
+              <p-button
+                icon="pi pi-pencil"
+                (onClick)="openCategoryDialog(category)"
+                [text]="true"
+                size="small"
+                severity="info"
+                pTooltip="Edit"
+                tooltipPosition="top"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                (onClick)="deleteCategory(category)"
+                [text]="true"
+                size="small"
+                severity="danger"
+                pTooltip="Delete"
+                tooltipPosition="top"
+              ></p-button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="text-center py-8">
+              <i class="pi pi-tags text-4xl text-gray-300 mb-3 block"></i>
+              <p class="text-gray-500">No categories found. Click "Add Category" to create one.</p>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
   </div>
 </div>
 
@@ -239,3 +467,63 @@
     </div>
   </ng-template>
 </p-dialog>
+
+<!-- Add/Edit Category Dialog -->
+<p-dialog
+  [(visible)]="showCategoryDialog"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [closable]="true"
+  (onHide)="closeCategoryDialog()"
+>
+  <ng-template pTemplate="header">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-tag text-indigo-600 text-xl"></i>
+      <h3 class="text-xl font-bold text-gray-800">
+        {{ editingCategory ? 'Edit Category' : 'Add New Category' }}
+      </h3>
+    </div>
+  </ng-template>
+
+  <form class="space-y-4" (ngSubmit)="createCategory()">
+    <div>
+      <label for="categoryName" class="block text-sm font-semibold text-gray-700 mb-2">
+        <i class="pi pi-tag text-indigo-600 mr-2"></i>Category Name *
+      </label>
+      <input
+        pInputText
+        id="categoryName"
+        [(ngModel)]="newCategory.name"
+        name="categoryName"
+        placeholder="Enter category name"
+        required
+        class="w-full"
+        [disabled]="categoryLoading"
+      />
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex gap-2 justify-end">
+      <p-button
+        label="Cancel"
+        icon="pi pi-times"
+        (onClick)="closeCategoryDialog()"
+        [outlined]="true"
+        severity="secondary"
+        [disabled]="categoryLoading"
+      ></p-button>
+      <p-button
+        [label]="editingCategory ? 'Update Category' : 'Create Category'"
+        icon="pi pi-check"
+        (onClick)="createCategory()"
+        [loading]="categoryLoading"
+        [disabled]="categoryLoading"
+        styleClass="!bg-gradient-to-r !from-indigo-600 !to-purple-600 !border-0"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm Dialog for Delete -->
+<p-confirmDialog></p-confirmDialog>

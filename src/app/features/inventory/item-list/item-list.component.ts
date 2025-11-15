@@ -13,6 +13,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ItemService } from '../../../core/services/item.service';
+
 import { Item, ItemFilters, ItemsResponse } from '../../../core/models/item.model';
 
 @Component({
@@ -40,7 +41,6 @@ export class ItemListComponent implements OnInit {
   loading = false;
   totalRecords = 0;
   skeletonItems = Array(10).fill({});
-
   filters: ItemFilters = {
     search: '',
     category: '',
@@ -48,15 +48,8 @@ export class ItemListComponent implements OnInit {
     limit: 10,
   };
 
-  categories = [
+  categoryOptions = [
     { label: 'All Categories', value: '' },
-    { label: 'Ring', value: 'Ring' },
-    { label: 'Gents Ring', value: 'Gents ring' },
-    { label: 'Ladies Ring', value: 'Ladies ring' },
-    { label: 'Necklace', value: 'Necklace' },
-    { label: 'Earring', value: 'Earring' },
-    { label: 'Bracelet', value: 'Bracelet' },
-    { label: 'Pendant', value: 'Pendant' },
   ];
 
   constructor(
@@ -64,7 +57,7 @@ export class ItemListComponent implements OnInit {
     private router: Router,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.loadItems();
   }
@@ -87,6 +80,8 @@ export class ItemListComponent implements OnInit {
       },
     });
   }
+
+
 
   onSearch(): void {
     this.filters.page = 1;

@@ -9,6 +9,7 @@ import { ItemFormComponent } from './features/inventory/item-form/item-form.comp
 import { CustomerListComponent } from './features/customers/customer-list.component';
 import { OrderListComponent } from './features/orders/order-list.component';
 import { SettingsComponent } from './features/settings/settings.component';
+import { ComingSoonComponent } from './features/coming-soon/coming-soon.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -23,7 +24,9 @@ export const routes: Routes = [
       { path: 'inventory/edit/:id', component: ItemFormComponent },
       { path: 'customers', component: CustomerListComponent },
       { path: 'orders', component: OrderListComponent },
-      { path: 'settings', component: SettingsComponent, canActivate: [adminGuard] },
+      { path: 'quotations', component: ComingSoonComponent, canActivate: [authGuard] },
+      { path: 'ledger', component: ComingSoonComponent, canActivate: [authGuard] },
+      { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

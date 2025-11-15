@@ -40,3 +40,9 @@ export interface Tenant {
   gstNumber?: string;
   createdAt?: string;
 }
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
