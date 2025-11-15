@@ -1,0 +1,79 @@
+/* Customer Form Component Styles */
+.form-container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form-card {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row .p-field {
+  flex: 1;
+}
+
+:host ::ng-deep .p-card {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep .p-inputtextarea {
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+:host ::ng-deep .p-inputtext:focus,
+:host ::ng-deep .p-inputtextarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+:host ::ng-deep .p-button {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+:host ::ng-deep .p-button.p-button-primary {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+:host ::ng-deep .p-button.p-button-primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+label {
+  font-weight: 500;
+  color: #374151;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

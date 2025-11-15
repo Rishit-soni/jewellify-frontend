@@ -1,0 +1,129 @@
+<div class="p-4 md:p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">
+      {{ isEditMode ? 'Edit Customer' : 'Add Customer' }}
+    </h1>
+    <p class="text-gray-600">
+      {{ isEditMode ? 'Update customer information' : 'Add a new customer to your database' }}
+    </p>
+  </div>
+
+  <div class="w-full">
+    <p-card>
+      <form (ngSubmit)="onSaveCustomer()" #customerForm="ngForm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Name -->
+          <div class="md:col-span-2">
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+              Name <span class="text-red-500">*</span>
+            </label>
+            <input
+              pInputText
+              id="name"
+              [(ngModel)]="customerData.name"
+              name="name"
+              placeholder="Enter customer name"
+              class="w-full"
+              required
+            />
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+              Phone <span class="text-red-500">*</span>
+            </label>
+            <input
+              pInputText
+              id="phone"
+              [(ngModel)]="customerData.phone"
+              name="phone"
+              placeholder="+91-9876543210"
+              class="w-full"
+              required
+            />
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2"> Email </label>
+            <input
+              pInputText
+              id="email"
+              [(ngModel)]="customerData.email"
+              name="email"
+              type="email"
+              placeholder="customer@example.com"
+              class="w-full"
+            />
+          </div>
+
+          <!-- PAN Number -->
+          <div>
+            <label for="panNumber" class="block text-sm font-medium text-gray-700 mb-2">
+              PAN Number
+            </label>
+            <input
+              pInputText
+              id="panNumber"
+              [(ngModel)]="customerData.panNumber"
+              name="panNumber"
+              placeholder="AAAAA9999A"
+              class="w-full"
+              maxlength="10"
+            />
+          </div>
+
+          <!-- Address -->
+          <div class="md:col-span-2">
+            <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
+              Address
+            </label>
+            <textarea
+              pInputTextarea
+              id="address"
+              [(ngModel)]="customerData.address"
+              name="address"
+              placeholder="Enter customer address"
+              [rows]="3"
+              class="w-full"
+            ></textarea>
+          </div>
+
+          <!-- Note -->
+          <div class="md:col-span-2">
+            <label for="note" class="block text-sm font-medium text-gray-700 mb-2"> Note </label>
+            <textarea
+              pInputTextarea
+              id="note"
+              [(ngModel)]="customerData.note"
+              name="note"
+              placeholder="Additional notes about the customer"
+              [rows]="2"
+              class="w-full"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 mt-6 pt-4 border-t">
+          <p-button
+            type="submit"
+            label="{{ isEditMode ? 'Update Customer' : 'Create Customer' }}"
+            icon="pi pi-check"
+            [loading]="loading"
+            styleClass="p-button-primary"
+          ></p-button>
+          <p-button
+            type="button"
+            label="Cancel"
+            icon="pi pi-times"
+            severity="secondary"
+            (onClick)="onCancel()"
+            [disabled]="loading"
+          ></p-button>
+        </div>
+      </form>
+    </p-card>
+  </div>
+</div>

@@ -1,0 +1,116 @@
+<div class="p-4 md:p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Customers</h1>
+    <p class="text-gray-600">Manage your customers</p>
+  </div>
+
+  <!-- Search and Actions -->
+  <div class="mb-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+    <div class="flex flex-col sm:flex-row gap-2 flex-1">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          [(ngModel)]="filters.search"
+          (keyup.enter)="onSearch()"
+          placeholder="Search customers..."
+          class="w-full sm:w-80"
+        />
+      </span>
+      <p-button
+        label="Search"
+        icon="pi pi-search"
+        (onClick)="onSearch()"
+        [loading]="loading"
+      ></p-button>
+      <p-button
+        label="Clear"
+        icon="pi pi-filter-slash"
+        severity="secondary"
+        (onClick)="clearFilters()"
+        [disabled]="loading"
+      ></p-button>
+    </div>
+    <p-button label="Add Customer" icon="pi pi-plus" (onClick)="onAddCustomer()"></p-button>
+  </div>
+
+  <!-- Table -->
+  <p-card>
+    <p-table
+      [value]="customers"
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="filters.limit"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
+      (onPage)="onPageChange($event)"
+      [rowsPerPageOptions]="[5, 10, 25, 50]"
+      responsiveLayout="scroll"
+      styleClass="p-datatable-striped"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>PAN Number</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-customer>
+        <tr class="cursor-pointer hover:bg-blue-50" (click)="onRowClick(customer)">
+          <td>{{ customer.name }}</td>
+          <td>{{ customer.phone }}</td>
+          <td>{{ customer.email || '-' }}</td>
+          <td>{{ customer.address || '-' }}</td>
+          <td>{{ customer.panNumber || '-' }}</td>
+          <td>
+            <div class="flex gap-2" (click)="$event.stopPropagation()">
+              <p-button
+                icon="pi pi-pencil"
+                severity="info"
+                size="small"
+                pTooltip="Edit Customer"
+                tooltipPosition="top"
+                (onClick)="onEditCustomer(customer)"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                pTooltip="Delete Customer"
+                tooltipPosition="top"
+                (onClick)="onDeleteCustomer(customer)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="loadingbody">
+        <tr *ngFor="let item of skeletonItems">
+          <td><p-skeleton width="120px" height="24px"></p-skeleton></td>
+          <td><p-skeleton width="100px" height="24px"></p-skeleton></td>
+          <td><p-skeleton width="150px" height="24px"></p-skeleton></td>
+          <td><p-skeleton width="200px" height="24px"></p-skeleton></td>
+          <td><p-skeleton width="100px" height="24px"></p-skeleton></td>
+          <td><p-skeleton width="80px" height="24px"></p-skeleton></td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center py-8 text-gray-500">
+            <i class="pi pi-users text-4xl mb-4 block"></i>
+            <p>No customers found</p>
+            <p class="text-sm">Start by adding your first customer</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

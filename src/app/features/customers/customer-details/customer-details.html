@@ -1,0 +1,423 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+  <!-- Header Section -->
+  <div class="bg-white shadow-lg border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <div class="flex items-center space-x-4">
+          <p-button
+            icon="pi pi-arrow-left"
+            (onClick)="onBackToList()"
+            [text]="true"
+            severity="secondary"
+            pTooltip="Back to Customers"
+            tooltipPosition="bottom"
+            size="large"
+          ></p-button>
+          <div class="flex items-center space-x-3">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
+            >
+              <i class="pi pi-user text-white text-xl"></i>
+            </div>
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900">
+                {{ loading ? 'Loading...' : customer?.name || 'Customer Details' }}
+              </h1>
+              <p class="text-sm text-gray-500" *ngIf="customer">Customer ID: {{ customer._id }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center space-x-3" *ngIf="!loading">
+          <p-button
+            label="Edit Customer"
+            icon="pi pi-pencil"
+            (onClick)="onEditCustomer()"
+            severity="info"
+            [outlined]="true"
+            size="large"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="space-y-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Customer Info Skeleton -->
+        <div class="lg:col-span-1">
+          <p-card class="shadow-xl">
+            <ng-template pTemplate="header">
+              <div class="h-32 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-t-lg"></div>
+            </ng-template>
+            <div class="space-y-4 -mt-8 relative z-10">
+              <div class="text-center">
+                <p-skeleton shape="circle" size="80px" class="mx-auto mb-4"></p-skeleton>
+                <p-skeleton width="60%" height="24px" class="mx-auto mb-2"></p-skeleton>
+                <p-skeleton width="40%" height="16px" class="mx-auto"></p-skeleton>
+              </div>
+              <div class="space-y-3">
+                <p-skeleton width="100%" height="20px"></p-skeleton>
+                <p-skeleton width="100%" height="20px"></p-skeleton>
+                <p-skeleton width="100%" height="20px"></p-skeleton>
+                <p-skeleton width="100%" height="20px"></p-skeleton>
+              </div>
+            </div>
+          </p-card>
+        </div>
+
+        <!-- Statistics Skeleton -->
+        <div class="lg:col-span-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <p-card *ngFor="let i of [1, 2, 3, 4]" class="shadow-lg">
+              <div class="text-center">
+                <p-skeleton width="60%" height="32px" class="mx-auto mb-2"></p-skeleton>
+                <p-skeleton width="80%" height="16px" class="mx-auto"></p-skeleton>
+              </div>
+            </p-card>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Details -->
+    <div *ngIf="!loading && customer" class="space-y-8">
+      <!-- Customer Information Card (Compact Height) -->
+      <p-card class="shadow-xl overflow-hidden">
+        <div class="p-4">
+          <div class="flex items-center space-x-4">
+            <div class="flex-shrink-0">
+              <div
+                class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
+              >
+                <i class="pi pi-user text-white text-lg"></i>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-lg font-bold text-gray-900">{{ customer.name }}</h3>
+              <p class="text-sm text-gray-500">{{ customer.phone }}</p>
+            </div>
+            <div class="flex-shrink-0 text-right">
+              <div class="text-xs text-gray-500">Customer Since</div>
+              <div class="text-sm text-gray-900">{{ customer.createdAt | date : 'shortDate' }}</div>
+            </div>
+          </div>
+
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div *ngIf="customer.email" class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Email</div>
+              <div class="text-sm text-gray-900 mt-1">{{ customer.email }}</div>
+            </div>
+            <div
+              *ngIf="customer.panNumber"
+              class="bg-gray-50 rounded-lg p-3 border border-gray-200"
+            >
+              <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                PAN Number
+              </div>
+              <div class="text-sm text-gray-900 mt-1 font-mono">{{ customer.panNumber }}</div>
+            </div>
+            <div
+              *ngIf="customer.address"
+              class="md:col-span-2 bg-gray-50 rounded-lg p-3 border border-gray-200"
+            >
+              <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Address</div>
+              <div class="text-sm text-gray-900 mt-1">{{ customer.address }}</div>
+            </div>
+            <div
+              *ngIf="customer.note"
+              class="md:col-span-2 lg:col-span-4 bg-gray-50 rounded-lg p-3 border border-gray-200"
+            >
+              <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Notes</div>
+              <div class="text-sm text-gray-700 mt-1">{{ customer.note }}</div>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Statistics Cards (Full Width) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <p-card
+          class="text-center shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200"
+        >
+          <div class="p-6">
+            <div
+              class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3"
+            >
+              <i class="pi pi-shopping-cart text-white text-xl"></i>
+            </div>
+            <div class="text-3xl font-bold text-blue-600 mb-1">
+              {{ statistics?.totalOrders || 0 }}
+            </div>
+            <div class="text-sm text-blue-700 font-medium">Total Orders</div>
+          </div>
+        </p-card>
+
+        <p-card
+          class="text-center shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-green-50 to-green-100 border-green-200"
+        >
+          <div class="p-6">
+            <div
+              class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3"
+            >
+              <i class="pi pi-dollar text-white text-xl"></i>
+            </div>
+            <div class="text-3xl font-bold text-green-600 mb-1">
+              ₹{{ statistics?.totalOrderValue || 0 | number }}
+            </div>
+            <div class="text-sm text-green-700 font-medium">Total Value</div>
+          </div>
+        </p-card>
+
+        <p-card
+          class="text-center shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200"
+        >
+          <div class="p-6">
+            <div
+              class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3"
+            >
+              <i class="pi pi-clock text-white text-xl"></i>
+            </div>
+            <div class="text-3xl font-bold text-orange-600 mb-1">
+              ₹{{ outstandingAmount | number }}
+            </div>
+            <div class="text-sm text-orange-700 font-medium">Outstanding</div>
+          </div>
+        </p-card>
+
+        <p-card
+          class="text-center shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200"
+        >
+          <div class="p-6">
+            <div
+              class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3"
+            >
+              <i class="pi pi-chart-line text-white text-xl"></i>
+            </div>
+            <div class="text-3xl font-bold text-purple-600 mb-1">
+              ₹{{ statistics?.averageOrderValue || 0 | number }}
+            </div>
+            <div class="text-sm text-purple-700 font-medium">Avg Order</div>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Outstanding Payments Alert -->
+      <p-card
+        *ngIf="outstandingAmount > 0"
+        class="border-l-4 border-l-orange-500 bg-gradient-to-r from-orange-50 to-red-50 shadow-lg"
+      >
+        <div class="flex items-center justify-between p-6">
+          <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+              <i class="pi pi-exclamation-triangle text-white text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-orange-800">Outstanding Payments</h3>
+              <p class="text-sm text-orange-700 mt-1">
+                ₹{{ outstandingAmount | number }} pending from
+                {{ outstandingPayments.length || 0 }} order(s)
+              </p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-2xl font-bold text-orange-600">
+              {{ outstandingPayments.length || 0 }}
+            </p>
+            <p class="text-xs text-orange-600">Pending Orders</p>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Orders & Transactions Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Recent Orders -->
+        <p-card header="Recent Orders" class="shadow-xl">
+          <ng-template pTemplate="header">
+            <div class="p-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
+              <h3 class="text-lg font-semibold flex items-center">
+                <i class="pi pi-shopping-cart mr-2"></i>
+                Recent Orders
+              </h3>
+            </div>
+          </ng-template>
+
+          <div
+            *ngIf="!recentOrders || recentOrders.length === 0"
+            class="text-center py-12 text-gray-500"
+          >
+            <div
+              class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="pi pi-shopping-cart text-3xl text-gray-400"></i>
+            </div>
+            <p class="text-lg font-medium">No orders found</p>
+            <p class="text-sm text-gray-400 mt-1">Orders will appear here once placed</p>
+          </div>
+
+          <div *ngIf="recentOrders && recentOrders.length > 0" class="space-y-4">
+            <div
+              *ngFor="let order of recentOrders"
+              class="border border-gray-200 rounded-xl p-6 hover:bg-gray-50 hover:shadow-md transition-all duration-200"
+            >
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <div class="font-bold text-gray-900 text-lg">{{ order.orderId }}</div>
+                  <div class="text-sm text-gray-500 flex items-center mt-1">
+                    <i class="pi pi-calendar mr-1"></i>
+                    {{ order.date | date : 'mediumDate' }}
+                  </div>
+                </div>
+                <p-tag
+                  [severity]="getStatusSeverity(order.status)"
+                  [value]="order.status"
+                  class="text-sm"
+                ></p-tag>
+              </div>
+
+              <div class="space-y-3 mb-4">
+                <div class="flex items-start space-x-2">
+                  <i class="pi pi-box text-gray-400 mt-0.5"></i>
+                  <div class="flex-1">
+                    <div class="text-sm font-medium text-gray-700 mb-1">Items</div>
+                    <div class="text-sm text-gray-600">
+                      {{ order.items.join(', ') || 'No items' }}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="flex items-start space-x-2"
+                  *ngIf="order.itemDetails && order.itemDetails.length > 0"
+                >
+                  <i class="pi pi-list text-gray-400 mt-0.5"></i>
+                  <div class="flex-1">
+                    <div class="text-xs text-gray-500 space-y-1">
+                      <div *ngFor="let item of order.itemDetails" class="flex justify-between">
+                        <span>{{ item.name }}</span>
+                        <span
+                          >{{ item.qty }} × ₹{{ item.price | number }} ({{ item.weight }}g)</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+                <span class="text-sm font-medium text-gray-600">Total Amount</span>
+                <span class="font-bold text-2xl text-green-600">₹{{ order.total | number }}</span>
+              </div>
+            </div>
+          </div>
+        </p-card>
+
+        <!-- Transaction History -->
+        <p-card header="Transaction History" class="shadow-xl">
+          <ng-template pTemplate="header">
+            <div class="p-4 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-t-lg">
+              <h3 class="text-lg font-semibold flex items-center">
+                <i class="pi pi-history mr-2"></i>
+                Transaction History
+              </h3>
+            </div>
+          </ng-template>
+
+          <div
+            *ngIf="!transactionHistory || transactionHistory.length === 0"
+            class="text-center py-12 text-gray-500"
+          >
+            <div
+              class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="pi pi-history text-3xl text-gray-400"></i>
+            </div>
+            <p class="text-lg font-medium">No transactions found</p>
+            <p class="text-sm text-gray-400 mt-1">Transaction history will appear here</p>
+          </div>
+
+          <div *ngIf="transactionHistory && transactionHistory.length > 0" class="space-y-3">
+            <div
+              *ngFor="let transaction of transactionHistory"
+              class="flex items-center justify-between py-4 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <div class="flex items-center space-x-4 flex-1">
+                <p-tag
+                  [severity]="getTransactionTypeSeverity(transaction.type)"
+                  [value]="transaction.type"
+                  size="small"
+                ></p-tag>
+                <div class="flex-1">
+                  <div class="text-sm font-semibold text-gray-900">
+                    {{ transaction.description }}
+                  </div>
+                  <div class="text-xs text-gray-500 flex items-center">
+                    <i class="pi pi-calendar mr-1"></i>
+                    {{ transaction.date | date : 'short' }}
+                  </div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div
+                  class="text-lg font-bold"
+                  [class]="transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'"
+                >
+                  {{ transaction.amount >= 0 ? '+' : '' }}₹{{ transaction.amount | number }}
+                </div>
+                <div class="text-xs text-gray-500 mt-1">
+                  Balance: ₹{{ transaction.balance | number }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Outstanding Payments Details -->
+      <p-card
+        *ngIf="outstandingPayments && outstandingPayments.length > 0"
+        header="Outstanding Payments"
+        class="shadow-xl"
+      >
+        <ng-template pTemplate="header">
+          <div class="p-4 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-t-lg">
+            <h3 class="text-lg font-semibold flex items-center">
+              <i class="pi pi-exclamation-triangle mr-2"></i>
+              Outstanding Payments
+            </h3>
+          </div>
+        </ng-template>
+
+        <p-table
+          [value]="outstandingPayments"
+          styleClass="p-datatable-sm"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="bg-gray-50">Order ID</th>
+              <th class="bg-gray-50">Amount</th>
+              <th class="bg-gray-50">Due Date</th>
+              <th class="bg-gray-50">Status</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-payment>
+            <tr class="hover:bg-gray-50">
+              <td class="font-semibold text-gray-900">{{ payment.orderId }}</td>
+              <td class="font-bold text-red-600 text-lg">₹{{ payment.amount | number }}</td>
+              <td class="text-gray-700">{{ payment.dueDate | date : 'mediumDate' }}</td>
+              <td>
+                <p-tag
+                  [severity]="getStatusSeverity(payment.status)"
+                  [value]="payment.status"
+                ></p-tag>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+</div>

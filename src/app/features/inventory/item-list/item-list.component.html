@@ -19,6 +19,7 @@
               type="text"
               [(ngModel)]="filters.search"
               (keyup.enter)="onSearch()"
+              (input)="onSearchInputChange()"
               placeholder="Search by name, code, or HUID"
               class="w-full pl-10"
             />
@@ -30,15 +31,16 @@
           <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
             Category
           </label>
-          <input
-            pInputText
+          <p-select
             id="category"
-            type="text"
             [(ngModel)]="filters.category"
-            (input)="onCategoryChange()"
-            placeholder="Search by category"
-            class="w-full"
-          />
+            [options]="categoryOptions"
+            optionLabel="label"
+            optionValue="value"
+            (onChange)="onCategoryChange()"
+            placeholder="Select Category"
+            styleClass="w-full"
+          ></p-select>
         </div>
       </div>
 

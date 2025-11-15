@@ -13,8 +13,10 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ItemService } from '../../../core/services/item.service';
+import { CategoryService } from '../../../core/services/category.service';
 
 import { Item, ItemFilters, ItemsResponse } from '../../../core/models/item.model';
+import { Category } from '../../../core/models/category.model';
 
 @Component({
   selector: 'app-item-list',
@@ -41,6 +43,7 @@ export class ItemListComponent implements OnInit {
   loading = false;
   totalRecords = 0;
   skeletonItems = Array(10).fill({});
+  categories: Category[] = [];
   filters: ItemFilters = {
     search: '',
     category: '',
@@ -54,12 +57,32 @@ export class ItemListComponent implements OnInit {
 
   constructor(
     private itemService: ItemService,
+    private categoryService: CategoryService,
     private router: Router,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) { }
   ngOnInit(): void {
+    this.loadCategories();
     this.loadItems();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (response) => {
+        this.categories = response.categories;
+        this.categoryOptions = [
+          { label: 'All Categories', value: '' },
+          ...response.categories.map(category => ({
+            label: category.name,
+            value: category.name
+          }))
+        ];
+      },
+      error: (err) => {
+        console.error('Failed to load categories', err);
+      },
+    });
   }
 
   loadItems(): void {
@@ -86,6 +109,14 @@ export class ItemListComponent implements OnInit {
   onSearch(): void {
     this.filters.page = 1;
     this.loadItems();
+  }
+
+  onSearchInputChange(): void {
+    // If search is cleared, reload all items
+    if (!this.filters.search || this.filters.search.trim() === '') {
+      this.filters.page = 1;
+      this.loadItems();
+    }
   }
 
   onCategoryChange(): void {
