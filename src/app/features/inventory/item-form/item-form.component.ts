@@ -9,11 +9,13 @@ import { SelectModule } from 'primeng/select';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 import { ItemService } from '../../../core/services/item.service';
 import { CategoryService } from '../../../core/services/category.service';
 import { Category } from '../../../core/models/category.model';
-import { CreateItemRequest } from '../../../core/models/item.model';
+import { CreateItemRequest, LabourDetails, OtherCharge } from '../../../core/models/item.model';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-item-form',
@@ -28,6 +30,7 @@ import { CreateItemRequest } from '../../../core/models/item.model';
     FileUploadModule,
     ButtonModule,
     CardModule,
+    CheckboxModule,
   ],
   templateUrl: './item-form.component.html',
   styleUrls: ['./item-form.component.css'],
@@ -41,7 +44,38 @@ export class ItemFormComponent implements OnInit {
     grossWeight: 0,
     netWeight: 0,
     huid: '',
+    sameWeight: true,
+    labour: {
+      mode: 'percentage_per_gram',
+      amount: 0,
+    },
+    otherCharges: [],
   };
+
+  get labourAmountLabel(): string {
+    switch (this.itemData.labour?.mode) {
+      case 'percentage_per_gram':
+        return 'Percentage (%)';
+      case 'rupees_per_gram':
+        return 'Amount (₹/g)';
+      case 'fixed_amount':
+        return 'Amount (₹)';
+      default:
+        return 'Amount';
+    }
+  }
+
+  get labourAmountMax(): number | undefined {
+    return this.itemData.labour?.mode === 'percentage_per_gram' ? 100 : undefined;
+  }
+
+  get sameWeight(): boolean {
+    return this.itemData.sameWeight ?? true;
+  }
+
+  set sameWeight(value: boolean) {
+    this.itemData.sameWeight = value;
+  }
 
   files: File[] = [];
   loading = false;
@@ -49,6 +83,12 @@ export class ItemFormComponent implements OnInit {
   itemId: string | null = null;
   categories: Category[] = [];
   categoryOptions: any[] = [];
+
+  labourModeOptions = [
+    { label: 'Percentage per gram', value: 'percentage_per_gram' },
+    { label: 'Rupees per gram', value: 'rupees_per_gram' },
+    { label: 'Fixed amount', value: 'fixed_amount' },
+  ];
 
   constructor(
     private itemService: ItemService,
@@ -65,6 +105,8 @@ export class ItemFormComponent implements OnInit {
       this.loadItem();
     }
     this.loadCategories();
+    // Initialize same weight logic
+    this.onSameWeightChange();
   }
 
   loadItem(): void {
@@ -81,6 +123,11 @@ export class ItemFormComponent implements OnInit {
           grossWeight: item.grossWeight,
           netWeight: item.netWeight,
           huid: item.huid,
+          labour: {
+            mode: item.labour?.mode || 'percentage_per_gram',
+            amount: item.labour?.amount || 0,
+          },
+          otherCharges: item.otherCharges || [],
         };
         this.loading = false;
       },
@@ -132,13 +179,27 @@ export class ItemFormComponent implements OnInit {
     this.loading = true;
     const formData = new FormData();
 
-    Object.keys(this.itemData).forEach((key) => {
+    // Handle basic fields
+    const basicFields = ['name', 'category', 'source', 'description', 'grossWeight', 'netWeight', 'huid'];
+    basicFields.forEach((key) => {
       const value = (this.itemData as any)[key];
-      if (value !== null && value !== undefined) {
+      if (value !== null && value !== undefined && value !== '') {
         formData.append(key, value.toString());
       }
     });
 
+    // Handle labour data
+    if (this.itemData.labour) {
+      formData.append('labour.mode', this.itemData.labour.mode || 'percentage_per_gram');
+      formData.append('labour.amount', (this.itemData.labour.amount || 0).toString());
+    }
+
+    // Handle otherCharges
+    if (this.itemData.otherCharges && this.itemData.otherCharges.length > 0) {
+      formData.append('otherCharges', JSON.stringify(this.itemData.otherCharges));
+    }
+
+    // Handle images
     this.files.slice(0, 5).forEach((file) => {
       formData.append('images', file, file.name);
     });
@@ -148,7 +209,7 @@ export class ItemFormComponent implements OnInit {
         ? this.itemService.updateItem(this.itemId, formData)
         : this.itemService.createItem(formData);
 
-    request$.subscribe({
+    request$.pipe(finalize(() => (this.loading = false))).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
@@ -163,7 +224,6 @@ export class ItemFormComponent implements OnInit {
           summary: 'Error',
           detail: err.userMessage || `Failed to ${this.isEditMode ? 'update' : 'create'} item`,
         });
-        this.loading = false;
       },
     });
   }
@@ -203,5 +263,30 @@ export class ItemFormComponent implements OnInit {
 
   onCancel(): void {
     this.router.navigate(['/inventory']);
+  }
+
+  onNetWeightChange(): void {
+    if (this.itemData.sameWeight) {
+      this.itemData.grossWeight = this.itemData.netWeight;
+    }
+  }
+
+  onSameWeightChange(): void {
+    if (this.itemData.sameWeight) {
+      this.itemData.grossWeight = this.itemData.netWeight;
+    }
+  }
+
+  addOtherCharge(): void {
+    if (!this.itemData.otherCharges) {
+      this.itemData.otherCharges = [];
+    }
+    this.itemData.otherCharges.push({ name: '', amount: 0 });
+  }
+
+  removeOtherCharge(index: number): void {
+    if (this.itemData.otherCharges) {
+      this.itemData.otherCharges.splice(index, 1);
+    }
   }
 }

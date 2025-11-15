@@ -6,6 +6,7 @@ import { AppLayoutComponent } from './shared/components/layout/app-layout/app-la
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { ItemListComponent } from './features/inventory/item-list/item-list.component';
 import { ItemFormComponent } from './features/inventory/item-form/item-form.component';
+import { ItemDetailsComponent } from './features/inventory/item-details/item-details.component';
 import { CustomerListComponent } from './features/customers/customer-list.component';
 import { CustomerFormComponent } from './features/customers/customer-form.component';
 import { CustomerDetails } from './features/customers/customer-details/customer-details';
@@ -24,6 +25,7 @@ export const routes: Routes = [
       { path: 'inventory', component: ItemListComponent },
       { path: 'inventory/add', component: ItemFormComponent },
       { path: 'inventory/edit/:id', component: ItemFormComponent },
+      { path: 'inventory/view/:id', component: ItemDetailsComponent },
       { path: 'customers', component: CustomerListComponent },
       { path: 'customers/add', component: CustomerFormComponent },
       { path: 'customers/edit/:id', component: CustomerFormComponent },

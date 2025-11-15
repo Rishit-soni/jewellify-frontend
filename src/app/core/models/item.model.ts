@@ -10,6 +10,8 @@ export interface Item {
   huid: string;
   stockQty: number;
   images?: string[];
+  labour?: LabourDetails;
+  otherCharges?: OtherCharge[];
   createdAt: string;
   updatedAt: string;
 }
@@ -28,6 +30,16 @@ export interface ItemsResponse {
   totalPages: number;
 }
 
+export interface LabourDetails {
+  mode: 'percentage_per_gram' | 'rupees_per_gram' | 'fixed_amount';
+  amount: number;
+}
+
+export interface OtherCharge {
+  name: string;
+  amount: number;
+}
+
 export interface CreateItemRequest {
   name: string;
   category: string;
@@ -36,4 +48,7 @@ export interface CreateItemRequest {
   grossWeight: number;
   netWeight: number;
   huid: string;
+  sameWeight?: boolean;
+  labour?: LabourDetails;
+  otherCharges?: OtherCharge[];
 }

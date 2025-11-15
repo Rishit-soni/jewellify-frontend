@@ -134,6 +134,10 @@ export class ItemListComponent implements OnInit {
     this.router.navigate(['/inventory/add']);
   }
 
+  onViewItem(item: Item): void {
+    this.router.navigate(['/inventory/view', item._id]);
+  }
+
   onEditItem(item: Item): void {
     this.router.navigate(['/inventory/edit', item._id]);
   }

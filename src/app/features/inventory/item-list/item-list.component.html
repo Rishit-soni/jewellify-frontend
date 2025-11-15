@@ -125,6 +125,14 @@
 
           <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
             <p-button
+              icon="pi pi-eye"
+              label="View"
+              (onClick)="onViewItem(item)"
+              [outlined]="true"
+              severity="success"
+              size="small"
+            ></p-button>
+            <p-button
               icon="pi pi-pencil"
               label="Edit"
               (onClick)="onEditItem(item)"
@@ -223,6 +231,15 @@
           <td class="hidden lg:table-cell whitespace-nowrap">{{ item.netWeight }}g</td>
           <td class="whitespace-nowrap">
             <div class="flex gap-1">
+              <p-button
+                icon="pi pi-eye"
+                (onClick)="onViewItem(item)"
+                [text]="true"
+                severity="success"
+                size="small"
+                pTooltip="View"
+                tooltipPosition="top"
+              ></p-button>
               <p-button
                 icon="pi pi-pencil"
                 (onClick)="onEditItem(item)"

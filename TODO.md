@@ -1,13 +1,14 @@
-# TODO: Implement Customer Module
+# TODO: Update Item Form Design
 
-- [x] Create customer.model.ts with Customer interface and related types
-- [x] Create customer.service.ts with CRUD operations
-- [x] Update customer-list.component.ts to implement full list functionality
-- [x] Create customer-list.component.html with table, search, and pagination
-- [x] Create customer-form.component.ts for add/edit functionality
-- [x] Create customer-form.component.html with form fields
-- [x] Update app.routes.ts to add customer add/edit routes
-- [x] Fix customer-details component CSS reference
-- [x] Improve error handling in customer-details component
-- [x] Create customer-details.css file
-- [x] Test the implementation - Build successful
+- [x] Update item.model.ts with labour and otherCharges fields
+- [x] Update item-form.component.ts with checkbox logic and new fields
+- [x] Update item-form.component.html with new layout and sections
+- [x] Test the updated form functionality
+
+# TODO: Add View Item Functionality
+
+- [x] Add View button to item-list.component.html (mobile and desktop views)
+- [x] Add onViewItem method to item-list.component.ts
+- [x] Create item-details component for viewing item details
+- [x] Add routing for /inventory/view/:id
+- [ ] Test the view functionality
