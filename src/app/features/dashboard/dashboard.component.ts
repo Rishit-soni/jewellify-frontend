@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { DashboardSummary } from '../../core/models/dashboard.model';
 import { MessageService } from 'primeng/api';
+import { LiveRatesComponent } from '../../shared/components/live-rates/live-rates.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,6 +22,7 @@ import { MessageService } from 'primeng/api';
     TagModule,
     SkeletonModule,
     RouterLink,
+    LiveRatesComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
@@ -31,7 +33,7 @@ export class DashboardComponent implements OnInit {
   chartData: any;
   chartOptions: any;
 
-  constructor(private dashboardService: DashboardService, private messageService: MessageService) {}
+  constructor(private dashboardService: DashboardService, private messageService: MessageService) { }
 
   ngOnInit(): void {
     this.loadDashboard();
@@ -40,31 +42,30 @@ export class DashboardComponent implements OnInit {
 
   loadDashboard(): void {
     this.loading = true;
-    console.log('Dashboard: Loading started, loading =', this.loading);
-    
+
     this.dashboardService.getSummary().subscribe({
       next: (data) => {
-        console.log('Dashboard: Data received', data);
         this.summary = data;
         this.prepareChartData();
         this.loading = false;
-        console.log('Dashboard: Loading finished, loading =', this.loading);
       },
       error: (err) => {
         console.error('Dashboard: Error loading data', err);
+        // Don't show error toast for now to avoid spam if backend is offline, 
+        // dashboard will just show skeleton or empty state behavior if handled
+        // But keeping it for debug for now
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: err.error?.message || err.userMessage || 'Failed to load dashboard data',
         });
         this.loading = false;
-        console.log('Dashboard: Loading finished (error), loading =', this.loading);
       },
     });
   }
 
   prepareChartData(): void {
-    if (!this.summary) return;
+    if (!this.summary || !this.summary.weeklyRevenue) return;
 
     const labels = this.summary.weeklyRevenue.map((r) => {
       const date = new Date(r.date);
@@ -100,12 +101,24 @@ export class DashboardComponent implements OnInit {
       scales: {
         y: {
           beginAtZero: true,
+          grid: {
+            color: 'rgba(160, 167, 181, 0.1)', /* Use slightly visible grid for both themes */
+          },
           ticks: {
+            color: '#64748b', /* text-secondary */
             callback: function (value: any) {
               return '₹' + value.toLocaleString();
             },
           },
         },
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#64748b'
+          }
+        }
       },
     };
   }

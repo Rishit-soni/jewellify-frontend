@@ -19,7 +19,7 @@ import { CreateCustomerRequest, Customer } from '../../core/models/customer.mode
         InputTextModule,
         TextareaModule,
         ButtonModule,
-        CardModule,
+        CardModule
     ],
     templateUrl: './customer-form.component.html',
     styleUrls: ['./customer-form.component.css'],
@@ -124,13 +124,13 @@ export class CustomerFormComponent implements OnInit {
             return false;
         }
 
-        // Basic phone validation (Indian phone number format)
-        const phoneRegex = /^(\+91[-\s]?)?[0]?(91)?[6789]\d{9}$/;
+        // Strict 10-digit phone validation
+        const phoneRegex = /^[0-9]{10}$/;
         if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
             this.messageService.add({
                 severity: 'warn',
                 summary: 'Validation Error',
-                detail: 'Please enter a valid phone number',
+                detail: 'Please enter a valid 10-digit phone number',
             });
             return false;
         }

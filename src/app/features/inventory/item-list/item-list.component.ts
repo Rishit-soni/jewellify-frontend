@@ -11,6 +11,7 @@ import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
+import { PaginatorModule } from 'primeng/paginator';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ItemService } from '../../../core/services/item.service';
 import { CategoryService } from '../../../core/services/category.service';
@@ -28,6 +29,7 @@ import { Category } from '../../../core/models/category.model';
     ButtonModule,
     InputTextModule,
     SelectModule,
+    PaginatorModule,
     TagModule,
     CardModule,
     ConfirmDialogModule,

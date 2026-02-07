@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { DrawerModule } from 'primeng/drawer';
+import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import { User } from '../../../../core/models/auth.model';
 
 @Component({
@@ -19,6 +21,7 @@ import { User } from '../../../../core/models/auth.model';
     RouterLink,
     RouterLinkActive,
     DrawerModule,
+    TagModule,
     ButtonModule,
     AvatarModule,
     MenuModule,
@@ -33,9 +36,10 @@ export class AppLayoutComponent implements OnInit {
 
   menuItems: MenuItem[] = [];
 
-  profileMenuItems: MenuItem[] = [];
-
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    public themeService: ThemeService
+  ) { }
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
@@ -88,6 +92,10 @@ export class AppLayoutComponent implements OnInit {
 
   toggleSidebar(): void {
     this.sidebarVisible = !this.sidebarVisible;
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 
   onLogout(): void {

@@ -81,34 +81,42 @@
               <div class="flex items-center space-x-4 mb-6">
                 <div class="flex-shrink-0">
                   <div
-                    class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
+                    *ngIf="!images || images.length === 0"
+                    class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center p-1 border-2 border-white shadow-md"
                   >
-                    <i class="pi pi-box text-white text-lg"></i>
+                    <i class="pi pi-box text-white text-2xl"></i>
                   </div>
+                   <p-image
+                    *ngIf="images && images.length > 0"
+                    [src]="images[0]" 
+                    alt="Item" 
+                    imageClass="w-16 h-16 object-cover rounded-full border-2 border-white shadow-md bg-white"
+                    [preview]="true"
+                  ></p-image>
                 </div>
                 <div class="flex-1 min-w-0">
                   <h3 class="text-2xl font-bold text-gray-900">{{ item.name }}</h3>
-                  <p class="text-sm text-gray-500">{{ item.itemCode }}</p>
+                  <p class="text-sm text-gray-500 font-mono">{{ item.itemCode }}</p>
                 </div>
               </div>
 
               <!-- Basic Information Grid -->
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <div class="bg-gray-50 dark:bg-surface-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                  <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Category
                   </div>
-                  <div class="text-lg font-semibold text-gray-900 mt-1">{{ item.category }}</div>
+                  <div class="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-1">{{ item.category }}</div>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <div class="bg-gray-50 dark:bg-surface-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                  <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Source
                   </div>
-                  <div class="text-lg font-semibold text-gray-900 mt-1">{{ item.source }}</div>
+                  <div class="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-1">{{ item.source }}</div>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">HUID</div>
-                  <div class="text-lg font-semibold text-gray-900 mt-1 font-mono">
+                <div class="bg-gray-50 dark:bg-surface-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                  <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">HUID</div>
+                  <div class="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-1 font-mono">
                     {{ item.huid }}
                   </div>
                 </div>
@@ -116,109 +124,72 @@
 
               <!-- Weight Information -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <div class="text-xs font-medium text-blue-700 uppercase tracking-wide">
+                <div class="bg-blue-600 rounded-lg p-4 shadow-sm text-white">
+                  <div class="text-xs font-medium text-blue-100 uppercase tracking-wide">
                     Gross Weight
                   </div>
-                  <div class="text-2xl font-bold text-blue-900 mt-1">{{ item.grossWeight }}g</div>
+                  <div class="text-2xl font-bold mt-1">{{ item.grossWeight }}g</div>
                 </div>
-                <div class="bg-green-50 rounded-lg p-4 border border-green-200">
-                  <div class="text-xs font-medium text-green-700 uppercase tracking-wide">
+                <div class="bg-emerald-600 rounded-lg p-4 shadow-sm text-white">
+                  <div class="text-xs font-medium text-emerald-100 uppercase tracking-wide">
                     Net Weight
                   </div>
-                  <div class="text-2xl font-bold text-green-900 mt-1">{{ item.netWeight }}g</div>
+                  <div class="text-2xl font-bold mt-1">{{ item.netWeight }}g</div>
                 </div>
               </div>
 
               <!-- Notes/Description -->
               <div *ngIf="item.description" class="mb-6">
-                <h4 class="text-lg font-semibold text-gray-900 mb-2">Notes</h4>
-                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p class="text-sm text-gray-700">{{ item.description }}</p>
+                <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Notes</h4>
+                <div class="bg-gray-50 dark:bg-surface-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                  <p class="text-sm text-gray-700 dark:text-gray-300">{{ item.description }}</p>
                 </div>
               </div>
 
+              <!-- Labour and Charges (Omitted for brevity, assumed unchanged or handled by global styles) -->
               <!-- Labour and Charges -->
-              <div
-                *ngIf="item.labour || (item.otherCharges && item.otherCharges.length > 0)"
-                class="space-y-4 mb-6"
-              >
-                <h4 class="text-lg font-semibold text-gray-900">Cost Breakdown</h4>
-
-                <!-- Labour Details -->
-                <div *ngIf="item.labour" class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="md:col-span-1">
-                      <div class="text-sm font-medium text-yellow-800">Labour Mode</div>
-                      <div class="text-base font-semibold text-yellow-900 mt-1">
-                        {{
-                          item.labour.mode === 'percentage_per_gram'
-                            ? 'Percentage/Gram'
-                            : item.labour.mode === 'rupees_per_gram'
-                            ? 'Rupees/Gram'
-                            : 'Fixed Amount'
-                        }}
-                      </div>
+              <div *ngIf="item.labour || (item.otherCharges && item.otherCharges.length > 0)" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Labour Calculation -->
+                <div *ngIf="item.labour" class="bg-gray-50 dark:bg-surface-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+                  <h4 class="text-gray-800 dark:text-gray-200 font-bold mb-3 flex items-center gap-2">
+                    <div class="p-1.5 bg-indigo-100 dark:bg-indigo-900/30 rounded text-indigo-600 dark:text-indigo-400">
+                        <i class="pi pi-hammer"></i>
                     </div>
-                    <div class="md:col-span-1">
-                      <div class="text-sm font-medium text-yellow-800">Labour Amount</div>
-                      <div class="text-base font-semibold text-yellow-900 mt-1">
-                        {{ item.labour.amount
-                        }}{{ item.labour.mode === 'percentage_per_gram' ? '%' : '₹' }}
-                      </div>
+                    Labour Details
+                  </h4>
+                  <div class="space-y-3">
+                    <div class="flex justify-between items-center text-sm">
+                      <span class="text-gray-500 dark:text-gray-400">Mode</span>
+                      <span class="font-medium text-gray-900 dark:text-gray-100 capitalize">
+                          {{ item.labour.mode.replace('_', ' ') }}
+                      </span>
                     </div>
-                    <div class="md:col-span-1 text-right">
-                      <div class="text-sm font-medium text-yellow-800">Calculated Labour</div>
-                      <div class="text-lg font-bold text-yellow-900 mt-1">
-                        ₹{{ calculateLabourCost() | number }}
-                      </div>
+                    <div class="flex justify-between items-center text-sm">
+                      <span class="text-gray-500 dark:text-gray-400">Rate / Amount</span>
+                      <span class="font-medium text-gray-900 dark:text-gray-100 font-mono">{{ item.labour.amount | currency:'INR' }}</span>
                     </div>
                   </div>
                 </div>
-
 
                 <!-- Other Charges -->
-                <div *ngIf="item.otherCharges && item.otherCharges.length > 0" class="space-y-2">
-                  <div
-                    *ngFor="let charge of item.otherCharges"
-                    class="bg-purple-50 rounded-lg p-4 border border-purple-200"
-                  >
-                    <div class="flex justify-between items-center">
-                      <div class="text-sm font-medium text-purple-800">{{ charge.name }}</div>
-                      <div class="text-lg font-bold text-purple-900">
-                        ₹{{ charge.amount | number }}
-                      </div>
+                <div *ngIf="item.otherCharges?.length" class="bg-gray-50 dark:bg-surface-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+                  <h4 class="text-gray-800 dark:text-gray-200 font-bold mb-3 flex items-center gap-2">
+                     <div class="p-1.5 bg-indigo-100 dark:bg-indigo-900/30 rounded text-indigo-600 dark:text-indigo-400">
+                        <i class="pi pi-tag"></i>
                     </div>
-                  </div>
-                </div>
-
-                <!-- Total Cost -->
-                <div class="bg-gray-100 rounded-lg p-4 border border-gray-300">
-                  <div class="flex justify-between items-center">
-                    <div class="text-sm font-medium text-gray-700">Total Additional Cost</div>
-                    <div class="text-xl font-bold text-gray-900">
-                      ₹{{ calculateTotalCost() | number }}
+                    Other Charges
+                  </h4>
+                  <div class="space-y-3">
+                    <div *ngFor="let charge of item.otherCharges" class="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-700 pb-2 last:border-0 last:pb-0">
+                      <span class="text-gray-500 dark:text-gray-400">{{ charge.name }}</span>
+                      <span class="font-medium text-gray-900 dark:text-gray-100 font-mono">{{ charge.amount | currency:'INR' }}</span>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Timestamps -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                    Created At
-                  </div>
-                  <div class="text-sm font-semibold text-gray-900 mt-1">
-                    {{ item.createdAt | date: 'medium' }}
-                  </div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                    Last Updated
-                  </div>
-                  <div class="text-sm font-semibold text-gray-900 mt-1">
-                    {{ item.updatedAt | date: 'medium' }}
+                    <div class="pt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center font-bold">
+                      <span class="text-gray-700 dark:text-gray-300">Total Charges</span>
+                      <span class="text-indigo-600 dark:text-indigo-400 font-mono">
+                        {{ calculateOtherChargesTotal() | currency:'INR' }}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -229,7 +200,7 @@
         <!-- Images Section -->
         <div class="lg:col-span-1">
           <p-card header="Item Images" class="shadow-xl">
-            <ng-template pTemplate="header">
+             <ng-template pTemplate="header">
               <div class="p-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
                 <h3 class="text-lg font-semibold flex items-center">
                   <i class="pi pi-images mr-2"></i>
@@ -238,33 +209,35 @@
               </div>
             </ng-template>
 
-            <div *ngIf="!images || images.length === 0" class="text-center py-8 text-gray-500">
-              <div
-                class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
-              >
+            <div *ngIf="!images || images.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
+              <div class="w-16 h-16 bg-gray-100 dark:bg-surface-800 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="pi pi-images text-3xl text-gray-400"></i>
               </div>
               <p class="text-lg font-medium">No images available</p>
               <p class="text-sm text-gray-400 mt-1">Images will appear here</p>
             </div>
 
-            <div *ngIf="images && images.length > 0" class="space-y-4">
-              <p-galleria
-                [value]="getGalleriaImages()"
-                [responsiveOptions]="responsiveOptions"
-                [numVisible]="3"
-                [showThumbnails]="false"
-                [showIndicators]="true"
-                styleClass="custom-galleria"
-              >
-                <ng-template pTemplate="item" let-item>
-                  <img
-                    [src]="item.source"
-                    [alt]="item.alt"
-                    class="w-full h-48 object-cover rounded-lg"
-                  />
-                </ng-template>
-              </p-galleria>
+            <div *ngIf="images && images.length > 0" class="space-y-4 p-4">
+              <div class="text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium">
+                {{ images.length }} image{{ images.length > 1 ? 's' : '' }} available
+              </div>
+              <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                 <div *ngFor="let img of images | slice:0:5" class="aspect-square relative group overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-surface-800 flex items-center justify-center">
+                    <p-image
+                      [src]="img"
+                      alt="Item Image"
+                      [preview]="true"
+                      styleClass="w-full h-full flex items-center justify-center"
+                      imageClass="w-full h-full object-contain max-h-full"
+                    >
+                        <ng-template pTemplate="indicator">
+                            <div class="flex items-center justify-center w-full h-full bg-black/40 hover:bg-black/60 transition-colors backdrop-blur-[2px]">
+                                <i class="pi pi-eye text-3xl text-white drop-shadow-md"></i>
+                            </div>
+                        </ng-template>
+                    </p-image>
+                 </div>
+              </div>
             </div>
           </p-card>
         </div>

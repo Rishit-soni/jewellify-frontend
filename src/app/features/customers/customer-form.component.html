@@ -25,7 +25,10 @@
               placeholder="Enter customer name"
               class="w-full"
               required
+              #name="ngModel"
+              [class.ng-invalid]="name.invalid && (name.dirty || name.touched)"
             />
+            <small class="p-error" *ngIf="name.invalid && (name.dirty || name.touched)">Name is required.</small>
           </div>
 
           <!-- Phone -->
@@ -38,10 +41,18 @@
               id="phone"
               [(ngModel)]="customerData.phone"
               name="phone"
-              placeholder="+91-9876543210"
+              placeholder="9876543210"
               class="w-full"
               required
+              maxlength="10"
+              pattern="[0-9]{10}"
+              #phone="ngModel"
+              [class.ng-invalid]="phone.invalid && (phone.dirty || phone.touched)"
             />
+            <small class="p-error" *ngIf="phone.invalid && (phone.dirty || phone.touched)">
+              <span *ngIf="phone.errors?.['required']">Phone is required.</span>
+              <span *ngIf="phone.errors?.['pattern']">Phone must be 10 digits.</span>
+            </small>
           </div>
 
           <!-- Email -->
@@ -55,7 +66,11 @@
               type="email"
               placeholder="customer@example.com"
               class="w-full"
+              email
+              #email="ngModel"
+              [class.ng-invalid]="email.invalid && (email.dirty || email.touched)"
             />
+            <small class="p-error" *ngIf="email.invalid && (email.dirty || email.touched)">Invalid email format.</small>
           </div>
 
           <!-- PAN Number -->
@@ -71,7 +86,11 @@
               placeholder="AAAAA9999A"
               class="w-full"
               maxlength="10"
+              pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+              #pan="ngModel"
+              [class.ng-invalid]="pan.invalid && (pan.dirty || pan.touched)"
             />
+            <small class="p-error" *ngIf="pan.invalid && (pan.dirty || pan.touched)">Invalid PAN format (e.g. ABCDE1234F).</small>
           </div>
 
           <!-- Address -->

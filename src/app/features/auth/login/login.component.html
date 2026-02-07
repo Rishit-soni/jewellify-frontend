@@ -35,11 +35,18 @@
             type="email"
             [(ngModel)]="loginData.email"
             name="email"
+            #email="ngModel"
             placeholder="you@example.com"
             required
+            email
             class="w-full hover:border-indigo-400 focus:border-indigo-500 transition-colors"
+            [class.ng-invalid]="email.invalid && (email.dirty || email.touched)"
             [disabled]="loading"
           />
+          <small class="p-error" *ngIf="email.invalid && (email.dirty || email.touched)">
+            <span *ngIf="email.errors?.['required']">Email is required.</span>
+            <span *ngIf="email.errors?.['email']">Please enter a valid email.</span>
+          </small>
         </div>
 
         <div>
@@ -49,13 +56,19 @@
           <p-password
             [(ngModel)]="loginData.password"
             name="password"
+            #password="ngModel"
+            required
             [toggleMask]="true"
             [feedback]="false"
             placeholder="Enter your password"
             styleClass="w-full"
             inputStyleClass="w-full hover:border-indigo-400 focus:border-indigo-500 transition-colors"
+            [class.ng-invalid]="password.invalid && (password.dirty || password.touched)"
             [disabled]="loading"
           ></p-password>
+          <small class="p-error" *ngIf="password.invalid && (password.dirty || password.touched)">
+            Password is required.
+          </small>
         </div>
 
         <div class="flex items-center justify-end">

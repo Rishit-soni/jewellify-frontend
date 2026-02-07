@@ -1,18 +1,321 @@
 @import 'primeicons/primeicons.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* PrimeNG Theme Variables */
 :root {
-  --primary-color: #4f46e5;
+  /* LIGHT THEME (Only Theme) */
+  --primary-50: #eef2ff;
+  --primary-100: #e0e7ff;
+  --primary-200: #c7d2fe;
+  --primary-300: #a5b4fc;
+  --primary-400: #818cf8;
+  --primary-500: #6366f1;
+  --primary-600: #4f46e5;
+  --primary-700: #4338ca;
+  --primary-800: #3730a3;
+  --primary-900: #312e81;
+
+  --surface-0: #ffffff;
+  --surface-50: #f8fafc;
+  --surface-100: #f1f5f9;
+  --surface-200: #e2e8f0;
+  --surface-300: #cbd5e1;
+  --surface-400: #94a3b8;
+  --surface-500: #64748b;
+  --surface-600: #475569;
+  --surface-700: #334155;
+  --surface-800: #1e293b;
+  --surface-900: #0f172a;
+  
+  --text-main: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  --border-color: #e2e8f0;
+  --card-bg: #ffffff;
+  --body-bg: #f8fafc;
+  
+  /* PrimeNG Overrides */
+  --primary-color: var(--primary-600);
   --primary-color-text: #ffffff;
 }
 
-/* Ensure proper CSS reset */
+/* Fix Input Icon Group */
+.p-input-icon-left, .p-input-icon-right {
+  position: relative;
+  display: block;
+}
+
+.p-input-icon-left > i, .p-input-icon-right > i {
+  position: absolute;
+  top: 50%;
+  margin-top: -0.5rem;
+  color: var(--text-secondary);
+  z-index: 1;
+}
+
+.p-input-icon-left > i {
+  left: 0.75rem;
+}
+
+.p-input-icon-right > i {
+  right: 0.75rem;
+}
+
+.p-input-icon-left > input {
+  padding-left: 2.5rem !important;
+}
+
+.p-input-icon-right > input {
+  padding-right: 2.5rem !important;
+}
+
+/* Global Reset & Base Styles */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--body-bg);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Modern Card Style */
+.table-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+/* PrimeNG Table Customization */
+.p-table .p-datatable-header {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
+  color: var(--text-main);
+}
+
+.p-table .p-datatable-thead > tr > th {
+  background: var(--surface-50);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+}
+
+.p-table .p-datatable-tbody > tr {
+  background: var(--card-bg);
+  color: var(--text-main);
+  transition: background-color 0.2s;
+}
+
+.p-table .p-datatable-tbody > tr > td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.p-table .p-datatable-tbody > tr:hover {
+  background: var(--surface-100) !important;
+}
+
+.p-paginator {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+/* Buttons */
+.p-button {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.p-button.p-button-outlined {
+  color: var(--primary-600);
+  border-color: var(--primary-300);
+}
+
+.p-button.p-button-danger {
+  background: #ef4444;
+  border-color: #ef4444;
+}
+
+/* Form Inputs */
+.p-inputtext {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+}
+
+.p-inputtext:focus {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 2px var(--primary-200);
+}
+
+/* Badges & Tags */
+.p-tag {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  border-radius: 9999px;
+}
+
+/* Filter Bar */
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-bar .search-input {
+  flex: 1;
+  min-width: 250px;
+}
+
+.filter-bar .search-input .p-input-icon-left {
+  width: 100%;
+}
+
+.filter-bar .search-input input {
+  width: 100%;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--surface-300);
+  border-radius: 20px;
+}
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: var(--surface-400);
+}
+
+/* Dialogs */
+.p-dialog .p-dialog-header {
+  background: var(--card-bg);
+  color: var(--text-main);
+  border-bottom: none;
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+}
+
+.p-dialog .p-dialog-content {
+  background: var(--card-bg);
+  color: var(--text-main);
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.p-dialog .p-dialog-footer {
+  background: var(--card-bg);
+  border-top: none;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+
+
+/* Specifically for .no-toolbar class usage */
+.no-toolbar .p-fileupload-buttonbar {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* In case structure is different */
+p-fileupload.no-toolbar .p-fileupload-buttonbar {
+  display: none !important;
+}
+
+.no-toolbar .p-fileupload-content {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Utility Classes for Theme Colors */
+.text-main { color: var(--text-main); }
+.text-secondary { color: var(--text-secondary); }
+.bg-card { background-color: var(--card-bg); }
+.border-theme { border-color: var(--border-color); }
+
+/* Animation Utils */
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modern Toast / Snackbar Styling */
+.p-toast {
+  opacity: 0.95;
+}
+
+.p-toast .p-toast-message {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-radius: 12px !important;
+  border: 1px solid transparent;
+  margin: 0 0 1rem 0;
+}
+
+.p-toast .p-toast-message .p-toast-message-content {
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.p-toast .p-toast-message.p-toast-message-success {
+  background: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+  color: #166534 !important;
+}
+.p-toast .p-toast-message.p-toast-message-success .p-toast-summary,
+.p-toast .p-toast-message.p-toast-message-success .p-toast-detail,
+.p-toast .p-toast-message.p-toast-message-success .p-toast-icon-close-icon {
+  color: #166534 !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-error {
+  background: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #991b1b !important;
+}
+.p-toast .p-toast-message.p-toast-message-error .p-toast-summary,
+.p-toast .p-toast-message.p-toast-message-error .p-toast-detail,
+.p-toast .p-toast-message.p-toast-message-error .p-toast-icon-close-icon {
+  color: #991b1b !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-warn {
+  background: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #92400e !important;
+}
+
+
+.p-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
 }

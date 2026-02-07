@@ -32,6 +32,7 @@ import { Category, CreateCategoryRequest, UpdateCategoryRequest } from '../../co
   ],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css'],
+  providers: [ConfirmationService],
 })
 export class SettingsComponent implements OnInit {
   showUserDialog = false;
@@ -71,6 +72,11 @@ export class SettingsComponent implements OnInit {
 
   users: User[] = [];
   categories: Category[] = [];
+  // UI filter state for Users and Categories
+  userFilters = { search: '' };
+  categoryFilters = { search: '' };
+  displayedUsers: User[] = [];
+  displayedCategories: Category[] = [];
   currentUserRole: string = '';
   passwordForm: any;
 
@@ -142,7 +148,7 @@ export class SettingsComponent implements OnInit {
     this.userService.getAllUsers().subscribe({
       next: (response) => {
         this.users = response.users;
-        console.log('Loaded users:', this.users);
+        this.displayedUsers = [...this.users];
       },
       error: (err: any) => {
         console.error('Error loading users:', err);
@@ -159,7 +165,7 @@ export class SettingsComponent implements OnInit {
     this.categoryService.getCategories().subscribe({
       next: (response) => {
         this.categories = response.categories;
-        console.log('Loaded categories:', this.categories);
+        this.displayedCategories = [...this.categories];
       },
       error: (err: any) => {
         console.error('Error loading categories:', err);
@@ -170,6 +176,39 @@ export class SettingsComponent implements OnInit {
         });
       },
     });
+  }
+
+  onUserSearch(): void {
+    const q = (this.userFilters.search || '').toLowerCase().trim();
+    if (!q) {
+      this.displayedUsers = [...this.users];
+      return;
+    }
+    this.displayedUsers = this.users.filter(u =>
+      (u.userName || '').toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q)
+    );
+  }
+
+  clearUserFilters(): void {
+    this.userFilters.search = '';
+    this.displayedUsers = [...this.users];
+  }
+
+  onCategorySearch(): void {
+    const q = (this.categoryFilters.search || '').toLowerCase().trim();
+    if (!q) {
+      this.displayedCategories = [...this.categories];
+      return;
+    }
+    this.displayedCategories = this.categories.filter(c =>
+      (c.name || '').toLowerCase().includes(q)
+    );
+  }
+
+  clearCategoryFilters(): void {
+    this.categoryFilters.search = '';
+    this.displayedCategories = [...this.categories];
   }
 
   createUser(): void {
@@ -192,11 +231,9 @@ export class SettingsComponent implements OnInit {
     }
 
     this.loading = true;
-    console.log('Creating user:', this.newUser);
 
     this.userService.createUser(this.newUser).subscribe({
       next: (response) => {
-        console.log('User created successfully:', response);
         this.messageService.add({
           severity: 'success',
           summary: 'Success',

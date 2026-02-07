@@ -13,13 +13,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.error instanceof ErrorEvent) {
         errorMessage = `Error: ${error.error.message}`;
       } else {
-        if (error.status === 401) {
+        if (error.status === 401 || error.status === 403) {
           localStorage.removeItem('jwt_token');
           localStorage.removeItem('current_user');
           router.navigate(['/login']);
-          errorMessage = 'Session expired. Please login again.';
-        } else if (error.status === 403) {
-          errorMessage = 'You do not have permission to access this resource.';
+          errorMessage = 'Session expired or access denied. Please login again.';
         } else if (error.status === 404) {
           errorMessage = 'Resource not found.';
         } else if (error.status === 500) {

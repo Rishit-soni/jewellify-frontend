@@ -78,6 +78,9 @@ export class ItemFormComponent implements OnInit {
   }
 
   files: File[] = [];
+  filePreviews: { file: File; url: string }[] = []; // For preview of new uploads
+  existingImages: string[] = []; // Existing images from server (Cloudinary URLs)
+  imagesToDelete: string[] = []; // Track which existing images to delete
   loading = false;
   isEditMode = false;
   itemId: string | null = null;
@@ -89,6 +92,11 @@ export class ItemFormComponent implements OnInit {
     { label: 'Rupees per gram', value: 'rupees_per_gram' },
     { label: 'Fixed amount', value: 'fixed_amount' },
   ];
+
+  // Image validation constants (Cloudinary limits)
+  readonly MAX_IMAGES = 5;
+  readonly MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+  readonly ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
   constructor(
     private itemService: ItemService,
@@ -129,6 +137,8 @@ export class ItemFormComponent implements OnInit {
           },
           otherCharges: item.otherCharges || [],
         };
+        // Load existing images
+        this.existingImages = item.images || [];
         this.loading = false;
       },
       error: (err) => {
@@ -164,11 +174,115 @@ export class ItemFormComponent implements OnInit {
   }
 
   onFileSelect(event: any): void {
-    this.files = Array.from(event.files);
+    const newFiles = Array.from(event.files) as File[];
+
+    // Check total count (existing + current + new)
+    const totalCount = this.existingImages.length - this.imagesToDelete.length + this.files.length + newFiles.length;
+    if (totalCount > this.MAX_IMAGES) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Too Many Images',
+        detail: `Maximum ${this.MAX_IMAGES} images allowed. You have ${this.existingImages.length - this.imagesToDelete.length} existing and ${this.files.length} selected.`,
+      });
+      return;
+    }
+
+    // Validate each file
+    for (const file of newFiles) {
+      // Check file size
+      if (file.size > this.MAX_FILE_SIZE) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'File Too Large',
+          detail: `${file.name} exceeds 5MB limit. File size: ${(file.size / 1024 / 1024).toFixed(2)}MB`,
+        });
+        return;
+      }
+
+      // Check file type
+      if (!this.ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Invalid File Type',
+          detail: `${file.name} is not a valid image. Allowed: JPG, PNG, GIF, WebP`,
+        });
+        return;
+      }
+    }
+
+    // All validations passed, add files and create previews
+    this.files = [...this.files, ...newFiles];
+
+    // Create previews for new files
+    newFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.filePreviews.push({ file, url: e.target.result });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const existingCount = this.existingImages.length - this.imagesToDelete.length;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Images Added',
+      detail: `${newFiles.length} image(s) selected. Total: ${existingCount + this.files.length}/${this.MAX_IMAGES}`,
+    });
   }
 
   onRemoveFile(event: any): void {
-    this.files = this.files.filter((f) => f !== event.file);
+    const removedFile = event.file;
+    this.files = this.files.filter((f) => f !== removedFile);
+    this.filePreviews = this.filePreviews.filter((p) => p.file !== removedFile);
+
+    const existingCount = this.existingImages.length - this.imagesToDelete.length;
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Image Removed',
+      detail: `Images remaining: ${existingCount + this.files.length}/${this.MAX_IMAGES}`,
+    });
+  }
+
+  // Remove a new file preview (before upload)
+  removeNewFilePreview(file: File): void {
+    this.files = this.files.filter((f) => f !== file);
+    this.filePreviews = this.filePreviews.filter((p) => p.file !== file);
+
+    const existingCount = this.existingImages.length - this.imagesToDelete.length;
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Image Removed',
+      detail: `Images remaining: ${existingCount + this.files.length}/${this.MAX_IMAGES}`,
+    });
+  }
+
+  // Mark existing image for deletion
+  removeExistingImage(imageUrl: string): void {
+    this.imagesToDelete.push(imageUrl);
+
+    const existingCount = this.existingImages.length - this.imagesToDelete.length;
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Image Marked for Deletion',
+      detail: `Will be deleted on save. Images remaining: ${existingCount + this.files.length}/${this.MAX_IMAGES}`,
+    });
+  }
+
+  // Undo deletion of existing image
+  undoRemoveExistingImage(imageUrl: string): void {
+    this.imagesToDelete = this.imagesToDelete.filter((url) => url !== imageUrl);
+
+    const existingCount = this.existingImages.length - this.imagesToDelete.length;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Image Restored',
+      detail: `Images: ${existingCount + this.files.length}/${this.MAX_IMAGES}`,
+    });
+  }
+
+  // Check if image is marked for deletion
+  isMarkedForDeletion(imageUrl: string): boolean {
+    return this.imagesToDelete.includes(imageUrl);
   }
 
   onSaveItem(): void {
@@ -199,7 +313,12 @@ export class ItemFormComponent implements OnInit {
       formData.append('otherCharges', JSON.stringify(this.itemData.otherCharges));
     }
 
-    // Handle images
+    // Handle images to delete (for edit mode)
+    if (this.imagesToDelete.length > 0) {
+      formData.append('imagesToDelete', JSON.stringify(this.imagesToDelete));
+    }
+
+    // Handle new images
     this.files.slice(0, 5).forEach((file) => {
       formData.append('images', file, file.name);
     });
@@ -219,10 +338,30 @@ export class ItemFormComponent implements OnInit {
         this.router.navigate(['/inventory']);
       },
       error: (err) => {
+        // Enhanced error handling for Cloudinary and validation errors
+        let errorMessage = err.userMessage || `Failed to ${this.isEditMode ? 'update' : 'create'} item`;
+
+        // Check for specific Cloudinary errors
+        if (err.error?.message) {
+          const backendMessage = err.error.message;
+
+          if (backendMessage.includes('Maximum 5 images')) {
+            errorMessage = 'Too many images! Maximum 5 images allowed per item.';
+          } else if (backendMessage.includes('File too large')) {
+            errorMessage = 'One or more files exceed 5MB limit. Please reduce file size.';
+          } else if (backendMessage.includes('Only image files')) {
+            errorMessage = 'Only image files are allowed (JPG, PNG, GIF, WebP).';
+          } else if (backendMessage.includes('Upload failed')) {
+            errorMessage = 'Image upload failed. Please check your internet connection and try again.';
+          } else {
+            errorMessage = backendMessage;
+          }
+        }
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: err.userMessage || `Failed to ${this.isEditMode ? 'update' : 'create'} item`,
+          detail: errorMessage,
         });
       },
     });
@@ -274,6 +413,14 @@ export class ItemFormComponent implements OnInit {
   onSameWeightChange(): void {
     if (this.itemData.sameWeight) {
       this.itemData.grossWeight = this.itemData.netWeight;
+    }
+  }
+
+  onCategoryChange(): void {
+    // Auto-fill name with category name when category is selected
+    // Only auto-fill if name is empty or matches a previous category name
+    if (this.itemData.category && (!this.itemData.name || this.categories.some(cat => cat.name === this.itemData.name))) {
+      this.itemData.name = this.itemData.category;
     }
   }
 
